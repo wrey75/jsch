@@ -30,15 +30,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.oxande.jsch;
 
 import java.io.InputStream;
-import java.util.Vector;
+import java.util.*;
 
 public class JSch{
   /**
    * The version number.
    */
-  public static final String VERSION  = "0.1.54";
+  public static final String VERSION  = "0.2.0";
 
-  static java.util.Hashtable config=new java.util.Hashtable();
+  static Map<String,String> config=new HashMap<>();
   static{
     config.put("kex", "ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1");
     config.put("server_host_key", "ssh-rsa,ssh-dss,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521");
@@ -138,9 +138,9 @@ public class JSch{
     config.put("ClearAllForwardings", "no");
   }
 
-  private java.util.Vector sessionPool = new java.util.Vector();
+  private final List<Session> sessionPool = new ArrayList<>();
 
-  private IdentityRepository defaultIdentityRepository =
+  private final IdentityRepository defaultIdentityRepository =
     new LocalIdentityRepository(this);
 
   private IdentityRepository identityRepository = defaultIdentityRepository;
@@ -276,7 +276,7 @@ public class JSch{
 
   protected void addSession(Session session){
     synchronized(sessionPool){
-      sessionPool.addElement(session);
+      sessionPool.add(session);
     }
   }
 

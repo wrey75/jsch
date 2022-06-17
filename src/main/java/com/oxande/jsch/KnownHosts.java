@@ -30,14 +30,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.oxande.jsch;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public
 class KnownHosts implements HostKeyRepository{
   private static final String _known_hosts="known_hosts";
 
-  private JSch jsch=null;
+  private final JSch jsch;
   private String known_hosts=null;
-  private java.util.Vector pool=null;
+  private final List<HostKey> pool;
 
   private MAC hmacsha1=null;
 
@@ -45,7 +47,7 @@ class KnownHosts implements HostKeyRepository{
     super();
     this.jsch=jsch;
     this.hmacsha1 = getHMACSHA1();
-    pool=new java.util.Vector();
+    pool=new ArrayList<>();
   }
 
   void setKnownHosts(String filename) throws JSchException{
@@ -59,8 +61,8 @@ class KnownHosts implements HostKeyRepository{
     } 
   }
   void setKnownHosts(InputStream input) throws JSchException{
-    pool.removeAllElements();
-    StringBuffer sb=new StringBuffer();
+    pool.clear();
+    StringBuilder sb=new StringBuilder();
     byte i;
     int j;
     boolean error=false;
@@ -219,7 +221,7 @@ loop:
         hk = new HashedHostKey(marker, host, type, 
                                Util.fromBase64(Util.str2byte(key), 0, 
                                                key.length()), comment);
-	pool.addElement(hk);
+	pool.add(hk);
       }
       if(error){
 	throw new JSchException("KnownHosts: invalid format");
@@ -241,7 +243,7 @@ loop:
   }
   private void addInvalidLine(String line) throws JSchException {
     HostKey hk = new HostKey(line, HostKey.UNKNOWN, null);
-    pool.addElement(hk);
+    pool.add(hk);
   }
   String getKnownHostsFile(){ return known_hosts; }
   public String getKnownHostsRepositoryID(){ return known_hosts; }
@@ -262,7 +264,7 @@ loop:
 
     synchronized(pool){
       for(int i=0; i<pool.size(); i++){
-        HostKey _hk=(HostKey)(pool.elementAt(i));
+        HostKey _hk=(HostKey)(pool.get(i));
         if(_hk.isMatched(host) && _hk.type==hk.type){
           if(Util.array_equals(_hk.key, key)){
             return OK;
@@ -292,7 +294,7 @@ loop:
     HostKey hk=null;
     synchronized(pool){
       for(int i=0; i<pool.size(); i++){
-        hk=(HostKey)(pool.elementAt(i));
+        hk=(HostKey)(pool.get(i));
         if(hk.isMatched(host) && hk.type==type){
 /*
 	  if(Util.array_equals(hk.key, key)){ return; }
@@ -311,7 +313,7 @@ loop:
 
     hk=hostkey;
 
-    pool.addElement(hk);
+    pool.add(hk);
 
     String bar=getKnownHostsRepositoryID();
     if(bar!=null){
@@ -357,7 +359,7 @@ loop:
     synchronized(pool){
       java.util.ArrayList v = new java.util.ArrayList();
       for(int i=0; i<pool.size(); i++){
-	HostKey hk=(HostKey)pool.elementAt(i);
+	HostKey hk=(HostKey)pool.get(i);
 	if(hk.type==HostKey.UNKNOWN) continue;
 	if(host==null || 
 	   (hk.isMatched(host) && 
@@ -389,7 +391,7 @@ loop:
     boolean sync=false;
     synchronized(pool){
     for(int i=0; i<pool.size(); i++){
-      HostKey hk=(HostKey)(pool.elementAt(i));
+      HostKey hk=(HostKey)(pool.get(i));
       if(host==null ||
 	 (hk.isMatched(host) && 
 	  (type==null || (hk.getType().equals(type) &&
@@ -398,7 +400,7 @@ loop:
         if(hosts.equals(host) || 
            ((hk instanceof HashedHostKey) &&
             ((HashedHostKey)hk).isHashed())){
-          pool.removeElement(hk);
+          pool.remove(hk);
         }
         else{
           hk.host=deleteSubString(hosts, host);
@@ -430,7 +432,7 @@ loop:
       HostKey hk;
       synchronized(pool){
       for(int i=0; i<pool.size(); i++){
-        hk=(HostKey)(pool.elementAt(i));
+        hk=pool.get(i);
         //hk.dump(out);
 	String marker=hk.getMarker();
 	String host=hk.getHost();
