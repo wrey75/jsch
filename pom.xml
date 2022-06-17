@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.jcraft</groupId>
+  <groupId>com.oxande</groupId>
   <artifactId>jsch</artifactId>
   <packaging>jar</packaging>
-  <version>0.1.55</version>
+  <version>0.2.0-SNAPSHOT</version>
   <name>JSch</name>
   <url>http://www.jcraft.com/jsch/</url>
   <description>JSch is a pure Java implementation of SSH2</description>
@@ -13,8 +13,8 @@
     <url>http://www.jcraft.com/</url>
   </organization>
   <scm>
-    <connection>scm:git:http://git.jcraft.com/jsch.git</connection>
-    <developerConnection>scm:git:http://git.jcraft.com/jsch.git</developerConnection>
+    <connection>scm:git:https://github.com/wrey75/jsch.git</connection>
+    <developerConnection>scm:git:https://github.com/wrey75/jsch.git</developerConnection>
     <url>http://git.jcraft.com/jsch.git</url>
   </scm>
   <developers>
@@ -30,6 +30,18 @@
       <role>developer</role>
     </roles>
     <timezone>+9</timezone>
+    </developer>
+    <developer>
+      <id>ymnk</id>
+      <name>William Rey</name>
+      <email>wrey75@gmail.com</email>
+      <url>http://github.com/wrey75</url>
+      <organization>OXANDE SARL</organization>
+      <organizationUrl>http://www.oxande.com/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
     </developer>
   </developers>
   <licenses>
