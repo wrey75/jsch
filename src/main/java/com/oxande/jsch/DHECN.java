@@ -56,7 +56,7 @@ public abstract class DHECN extends KeyExchange{
   protected int key_size;
 
   public void init(Session session,
-		   byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception{
+                   byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception{
     this.session=session;
     this.V_S=V_S;      
     this.V_C=V_C;      
@@ -65,7 +65,7 @@ public abstract class DHECN extends KeyExchange{
 
     try{
       Class c=Class.forName(session.getConfig(sha_name));
-      sha=(HASH)(c.newInstance());
+      sha=(HASH)(c.getDeclaredConstructor().newInstance());
       sha.init();
     }
     catch(Exception e){
@@ -87,9 +87,7 @@ public abstract class DHECN extends KeyExchange{
       buf.putString(Q_C);
     }
     catch(Exception e){
-      if(e instanceof Throwable)
-        throw new JSchException(e.toString(), (Throwable)e);
-      throw new JSchException(e.toString());
+      throw new JSchException(e.toString(), e);
     }
 
     if(V_S==null){  // This is a really ugly hack for Session.checkKexes ;-(
