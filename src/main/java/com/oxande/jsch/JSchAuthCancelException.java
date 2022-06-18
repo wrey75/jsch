@@ -31,9 +31,10 @@ package com.oxande.jsch;
 
 class JSchAuthCancelException extends JSchException{
   //private static final long serialVersionUID=3204965907117900987L;
-  String method;
+  private final String method;
   JSchAuthCancelException () {
     super();
+    this.method = null;
   }
   JSchAuthCancelException (String s) {
     super(s);

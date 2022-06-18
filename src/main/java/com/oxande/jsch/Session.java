@@ -107,7 +107,7 @@ public class Session implements Runnable{
   private boolean isAuthed=false;
 
   private Thread connectThread=null;
-  private Object lock=new Object();
+  private final Object lock=new Object();
 
   boolean x11_forwarding=false;
   boolean agent_forwarding=false;

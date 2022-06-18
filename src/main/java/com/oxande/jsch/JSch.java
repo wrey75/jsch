@@ -38,7 +38,7 @@ public class JSch{
    */
   public static final String VERSION  = "0.2.0";
 
-  static Map<String,String> config=new HashMap<>();
+  static final Map<String,String> config=new HashMap<>();
   static{
     config.put("kex", "ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1");
     config.put("server_host_key", "ssh-rsa,ssh-dss,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521");
@@ -205,8 +205,8 @@ public class JSch{
 
   /**
    * Instantiates the <code>Session</code> object with
-   * <code>host</code>.  The user name and port number will be retrieved from
-   * ConfigRepository.  If user name is not given,
+   * <code>host</code>.  The username and port number will be retrieved from
+   * ConfigRepository.  If username is not given,
    * the system property "user.name" will be referred. 
    *
    * @param host hostname
@@ -270,8 +270,7 @@ public class JSch{
     if(host==null){
       throw new JSchException("host must not be null.");
     }
-    Session s = new Session(this, username, host, port); 
-    return s;
+    return new Session(this, username, host, port);
   }
 
   protected void addSession(Session session){
@@ -289,7 +288,7 @@ public class JSch{
   /**
    * Sets the hostkey repository.
    *
-   * @param hkrepo
+   * @param hkrepo {@link HostKeyRepository}
    *
    * @see HostKeyRepository
    * @see KnownHosts
@@ -485,6 +484,7 @@ public class JSch{
   /**
    * @deprecated use #removeIdentity(Identity identity)
    */
+  @Deprecated
   public void removeIdentity(String name) throws JSchException{
     Vector identities = identityRepository.getIdentities();
     for(int i=0; i<identities.size(); i++){
@@ -544,7 +544,7 @@ public class JSch{
    */
   public static String getConfig(String key){ 
     synchronized(config){
-      return (String)(config.get(key));
+      return config.get(key);
     } 
   }
 
@@ -553,11 +553,10 @@ public class JSch{
    *
    * @param newconf configurations
    */
-  public static void setConfig(java.util.Hashtable newconf){
+  public static void setConfig(Map<String, String> newconf){
     synchronized(config){
-      for(java.util.Enumeration e=newconf.keys() ; e.hasMoreElements() ;) {
-	String key=(String)(e.nextElement());
-	config.put(key, (String)(newconf.get(key)));
+      for(Map.Entry<String,String> entry :newconf.entrySet()) {
+	    config.put(entry.getKey(), entry.getValue());
       }
     }
   }

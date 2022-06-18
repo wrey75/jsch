@@ -34,6 +34,8 @@ import java.io.PipedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public abstract class Channel implements Runnable{
@@ -48,7 +50,7 @@ public abstract class Channel implements Runnable{
   static final int SSH_OPEN_RESOURCE_SHORTAGE=              4;
 
   static int index=0; 
-  private static java.util.Vector pool=new java.util.Vector();
+  private static final List<Channel> pool=new ArrayList<>();
   static Channel getChannel(String type){
     if(type.equals("session")){
       return new ChannelSession();
@@ -81,8 +83,7 @@ public abstract class Channel implements Runnable{
   }
   static Channel getChannel(int id, Session session){
     synchronized(pool){
-      for(int i=0; i<pool.size(); i++){
-        Channel c=(Channel)(pool.elementAt(i));
+      for(Channel c:pool){
         if(c.id==id && c.session==session) return c;
       }
     }
@@ -90,7 +91,7 @@ public abstract class Channel implements Runnable{
   }
   static void del(Channel c){
     synchronized(pool){
-      pool.removeElement(c);
+      pool.remove(c);
     }
   }
 
@@ -126,7 +127,7 @@ public abstract class Channel implements Runnable{
   Channel(){
     synchronized(pool){
       id=index++;
-      pool.addElement(this);
+      pool.add(this);
     }
   }
   synchronized void setRecipient(int foo){
@@ -243,11 +244,13 @@ public abstract class Channel implements Runnable{
           }
 
         }
-        byte[] b=new byte[1];
+        final byte[] b=new byte[1];
         public void write(int w) throws java.io.IOException{
           b[0]=(byte)w;
           write(b, 0, 1);
         }
+
+        @Override
         public void write(byte[] buf, int s, int l) throws java.io.IOException{
           if(packet==null){
             init();
@@ -277,6 +280,7 @@ public abstract class Channel implements Runnable{
           }
         }
 
+        @Override
         public void flush() throws java.io.IOException{
           if(closed){
             throw new java.io.IOException("Already closed");
@@ -302,6 +306,8 @@ public abstract class Channel implements Runnable{
           }
 
         }
+
+        @Override
         public void close() throws java.io.IOException{
           if(packet==null){
             try{
@@ -325,7 +331,7 @@ public abstract class Channel implements Runnable{
     return out;
   }
 
-  class MyPipedInputStream extends PipedInputStream{
+  static class MyPipedInputStream extends PipedInputStream{
     private int BUFFER_SIZE = 1024;
     private int max_buffer_size = BUFFER_SIZE;
     MyPipedInputStream() throws IOException{ super(); }
@@ -411,8 +417,7 @@ public abstract class Channel implements Runnable{
       else if(buffer.length == size && size > BUFFER_SIZE) { 
         int  i = size/2;
         if(i<BUFFER_SIZE) i = BUFFER_SIZE;
-        byte[] tmp = new byte[i];
-        buffer=tmp;
+        buffer = new byte[i];
       }
     }
   }
@@ -541,13 +546,13 @@ public abstract class Channel implements Runnable{
     return close;
   }
   static void disconnect(Session session){
-    Channel[] channels=null;
+    Channel[] channels;
     int count=0;
     synchronized(pool){
       channels=new Channel[pool.size()];
       for(int i=0; i<pool.size(); i++){
 	try{
-	  Channel c=((Channel)(pool.elementAt(i)));
+	  Channel c= pool.get(i);
 	  if(c.session==session){
 	    channels[count++]=c;
 	  }
@@ -631,6 +636,8 @@ public abstract class Channel implements Runnable{
       super(out);
       this.out=out;
     }
+
+    @Override
     public void close() throws IOException{
       if(out!=null){
         this.out.close();
@@ -647,12 +654,16 @@ public abstract class Channel implements Runnable{
         this._sink=(MyPipedInputStream)in;
       }
     }
+
+    @Override
     public void write(int b) throws IOException {
       if(_sink != null) {
         _sink.checkSpace(1);
       }
       super.write(b);
     }
+
+    @Override
     public void write(byte[] b, int off, int len) throws IOException {
       if(_sink != null) {
         _sink.checkSpace(len);
@@ -764,7 +775,7 @@ public abstract class Channel implements Runnable{
     if(this.getRecipient()==-1){  // timeout
       throw new JSchException("channel is not opened.");
     }
-    if(this.open_confirmation==false){  // SSH_MSG_CHANNEL_OPEN_FAILURE
+    if(!this.open_confirmation){  // SSH_MSG_CHANNEL_OPEN_FAILURE
       throw new JSchException("channel is not opened.");
     }
     connected=true;

@@ -52,7 +52,7 @@ abstract class Request{
       long timeout=channel.connectTimeout;
       while(channel.isConnected() && channel.reply==-1){
 	try{Thread.sleep(10);}
-	catch(Exception ee){
+	catch(InterruptedException ee){
 	}
         if(timeout>0L &&
            (System.currentTimeMillis()-start)>timeout){

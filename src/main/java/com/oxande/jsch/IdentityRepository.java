@@ -29,18 +29,20 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.oxande.jsch;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 public interface IdentityRepository {
-  public static final int UNAVAILABLE=0;
-  public static final int NOTRUNNING=1;
-  public static final int RUNNING=2;
-  public String getName();
-  public int getStatus();
-  public Vector getIdentities();
-  public boolean add(byte[] identity);
-  public boolean remove(byte[] blob);
-  public void removeAll();
+  static final int UNAVAILABLE=0;
+  static final int NOTRUNNING=1;
+  static final int RUNNING=2;
+  String getName();
+  int getStatus();
+  Vector<Identity> getIdentities();
+  boolean add(byte[] identity);
+  boolean remove(byte[] blob);
+  void removeAll();
 
   /**
    * JSch will accept ciphered keys, but some implementations of
@@ -49,9 +51,9 @@ public interface IdentityRepository {
    * been introduced to cache ciphered keys for them, and pass them
    * whenever they are de-ciphered.
    */
-  static class Wrapper implements IdentityRepository {
+  class Wrapper implements IdentityRepository {
     private IdentityRepository ir;
-    private Vector cache = new Vector();
+    private List<Identity> cache = new ArrayList<>();
     private boolean keep_in_cache = false;
     Wrapper(IdentityRepository ir){
       this(ir, false);
@@ -73,16 +75,15 @@ public interface IdentityRepository {
       return ir.remove(blob);
     }
     public void removeAll() {
-      cache.removeAllElements();
+      cache.clear();
       ir.removeAll();
     }
     public Vector getIdentities() {
-      Vector result = new Vector();
-      for(int i = 0; i< cache.size(); i++){
-        Identity identity = (Identity)(cache.elementAt(i));
+      Vector<Identity> result = new Vector();
+      for(Identity identity : cache){
         result.add(identity);
       }
-      Vector tmp = ir.getIdentities();
+      Vector<Identity> tmp = ir.getIdentities();
       for(int i = 0; i< tmp.size(); i++){
         result.add(tmp.elementAt(i));
       }
@@ -99,14 +100,13 @@ public interface IdentityRepository {
         }
       }
       else
-        cache.addElement(identity);
+        cache.add(identity);
     }
     void check() {
-      if(cache.size() > 0){
-        Object[] identities = cache.toArray();
-        for(int i = 0; i < identities.length; i++){
-          Identity identity = (Identity)(identities[i]);
-          cache.removeElement(identity);
+      if(!cache.isEmpty()){
+        Identity[] identities = cache.toArray(new Identity[0]);
+        for(Identity identity: identities){
+          cache.remove(identity);
           add(identity);
         }
       }
