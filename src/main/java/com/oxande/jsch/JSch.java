@@ -30,6 +30,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.oxande.jsch;
 
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class JSch{
@@ -97,7 +98,7 @@ public class JSch{
     config.put("keypairgen.dsa",   "com.oxande.jsch.jce.KeyPairGenDSA");
     config.put("keypairgen.rsa",   "com.oxande.jsch.jce.KeyPairGenRSA");
     config.put("keypairgen.ecdsa", "com.oxande.jsch.jce.KeyPairGenECDSA");
-    config.put("random",        "com.oxande.jsch.jce.Random");
+    config.put("random",        "com.oxande.jsch.impl.Random");
 
     config.put("none",           "com.oxande.jsch.CipherNone");
 
@@ -585,5 +586,20 @@ public class JSch{
 
   static Logger getLogger(){
     return logger;
+  }
+
+  /**
+   * Provide a {@link Random} engine for Jsch.
+   *
+   * @return a random provider.
+   */
+  public Random provideRandomEngine() {
+    String className = getConfig("random");
+    try {
+      Class c = Class.forName(className);
+      return (Random)c.getDeclaredConstructor().newInstance();
+    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new UnsupportedOperationException("Cam not create " + className, ex);
+    }
   }
 }

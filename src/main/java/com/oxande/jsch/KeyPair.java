@@ -279,7 +279,7 @@ public abstract class KeyPair{
     if(cipher==null) cipher=genCipher();
     byte[] iv=_iv[0]=new byte[cipher.getIVSize()];
 
-    if(random==null) random=genRandom();
+    if(random==null) random=jsch.provideRandomEngine();
     random.fill(iv, 0, iv.length);
 
     byte[] key=genKey(passphrase, iv);
@@ -382,16 +382,7 @@ public abstract class KeyPair{
     return j;
   }
 
-  private Random genRandom(){
-    if(random==null){
-      try{
-	Class c=Class.forName(jsch.getConfig("random"));
-        random=(Random)(c.newInstance());
-      }
-      catch(Exception e){ System.err.println("connect: random "+e); }
-    }
-    return random;
-  }
+
 
   private HASH genHash(){
     try{
