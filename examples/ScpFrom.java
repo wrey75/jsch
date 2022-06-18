@@ -139,7 +139,7 @@ public class ScpFrom{
     if(b==-1) return b;
 
     if(b==1 || b==2){
-      StringBuffer sb=new StringBuffer();
+      StringBuilder sb=new StringBuilder();
       int c;
       do {
 	c=in.read();

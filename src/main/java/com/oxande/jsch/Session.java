@@ -2041,7 +2041,7 @@ break;
         if(tmp[i].length()==0) continue;
         foo.addElement(tmp[i].trim());
       }
-      StringBuffer sb = new StringBuffer(); // join
+      StringBuilder sb = new StringBuilder(); // join
       for(int i=0; i<foo.size(); i++){
         sb.append((String)(foo.elementAt(i)));
         if(i+1<foo.size())
