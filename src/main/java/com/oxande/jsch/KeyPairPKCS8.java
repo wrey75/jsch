@@ -29,10 +29,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.oxande.jsch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Vector;
 import java.math.BigInteger;
 
 public class KeyPairPKCS8 extends KeyPair {
+  private final static Logger LOG = LoggerFactory.getLogger(KeyPairPKCS8.class);
+
   private static final byte[] rsaEncryption = {
     (byte)0x2a, (byte)0x86, (byte)0x48, (byte)0x86,
     (byte)0xf7, (byte)0x0d, (byte)0x01, (byte)0x01, (byte)0x01
@@ -347,16 +352,13 @@ or
       cipher=(Cipher)(c.newInstance());
     }
     catch(Exception e){
-      if(JSch.getLogger().isEnabled(Logger.FATAL)){
-        String message="";
         if(name==null){
-          message="unknown oid: "+Util.toHex(id);
+          LOG.error("unknown oid: {}",Util.toHex(id));
         }
         else {
-          message="function "+name+" is not supported";
+          LOG.error("function {} is not supported", name);
         }
-        JSch.getLogger().log(Logger.FATAL, "PKCS8: "+message);
-      }
+
     }
     return cipher;
   }

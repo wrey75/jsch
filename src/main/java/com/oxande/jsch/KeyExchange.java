@@ -29,7 +29,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.oxande.jsch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class KeyExchange{
+  private static final Logger LOG = LoggerFactory.getLogger(KeyExchange.class);
 
   static final int PROPOSAL_KEX_ALGS=0;
   static final int PROPOSAL_SERVER_HOST_KEY_ALGS=1;
@@ -94,14 +98,12 @@ public abstract class KeyExchange{
     Buffer sb=new Buffer(I_S); sb.setOffSet(17);
     Buffer cb=new Buffer(I_C); cb.setOffSet(17);
 
-    if(JSch.getLogger().isEnabled(Logger.INFO)){
+    if(LOG.isDebugEnabled()){
       for(int i=0; i<PROPOSAL_MAX; i++){
-        JSch.getLogger().log(Logger.INFO,
-                             "kex: server: "+Util.byte2str(sb.getString()));
+        LOG.debug("kex: server: {}",Util.byte2str(sb.getString()));
       }
       for(int i=0; i<PROPOSAL_MAX; i++){
-        JSch.getLogger().log(Logger.INFO,
-                             "kex: client: "+Util.byte2str(cb.getString()));
+        LOG.debug("kex: client: {}", Util.byte2str(cb.getString()));
       }
       sb.setOffSet(17);
       cb.setOffSet(17);
@@ -141,17 +143,15 @@ public abstract class KeyExchange{
       }
     }
 
-    if(JSch.getLogger().isEnabled(Logger.INFO)){
-      JSch.getLogger().log(Logger.INFO, 
-                           "kex: server->client"+
-                           " "+guess[PROPOSAL_ENC_ALGS_STOC]+
-                           " "+guess[PROPOSAL_MAC_ALGS_STOC]+
-                           " "+guess[PROPOSAL_COMP_ALGS_STOC]);
-      JSch.getLogger().log(Logger.INFO, 
-                           "kex: client->server"+
-                           " "+guess[PROPOSAL_ENC_ALGS_CTOS]+
-                           " "+guess[PROPOSAL_MAC_ALGS_CTOS]+
-                           " "+guess[PROPOSAL_COMP_ALGS_CTOS]);
+    if(LOG.isDebugEnabled()){
+      LOG.debug("kex: server->client {} {} {}",
+                           guess[PROPOSAL_ENC_ALGS_STOC],
+                           guess[PROPOSAL_MAC_ALGS_STOC],
+                           guess[PROPOSAL_COMP_ALGS_STOC]);
+      LOG.debug("kex: client->server {} {} {}",
+                           guess[PROPOSAL_ENC_ALGS_CTOS],
+                           guess[PROPOSAL_MAC_ALGS_CTOS],
+                           guess[PROPOSAL_COMP_ALGS_CTOS]);
     }
 
     return guess;
@@ -225,10 +225,7 @@ public abstract class KeyExchange{
       sig.update(H);
       result=sig.verify(sig_of_H);
 
-      if(JSch.getLogger().isEnabled(Logger.INFO)){
-        JSch.getLogger().log(Logger.INFO, 
-                             "ssh_rsa_verify: signature "+result);
-      }
+      LOG.debug("ssh_rsa_verify: signature {}", result);
     }
     else if(alg.equals("ssh-dss")){
       byte[] q=null;
@@ -270,10 +267,7 @@ public abstract class KeyExchange{
       sig.update(H);
       result=sig.verify(sig_of_H);
 
-      if(JSch.getLogger().isEnabled(Logger.INFO)){
-        JSch.getLogger().log(Logger.INFO, 
-                             "ssh_dss_verify: signature "+result);
-      }
+      LOG.debug("ssh_dss_verify: signature {}",result);
     }
     else if(alg.equals("ecdsa-sha2-nistp256") ||
             alg.equals("ecdsa-sha2-nistp384") ||

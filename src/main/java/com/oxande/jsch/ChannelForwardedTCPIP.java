@@ -29,11 +29,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.oxande.jsch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.*;
 import java.io.*;
 import java.util.Vector;
 
 public class ChannelForwardedTCPIP extends Channel{
+  private static final Logger LOG = LoggerFactory.getLogger(ChannelForwardedTCPIP.class);
 
   private static Vector pool = new Vector();
 
@@ -157,9 +161,8 @@ public class ChannelForwardedTCPIP extends Channel{
       this.config = getPort(_session, null, port);
 
     if(this.config == null){
-      if(JSch.getLogger().isEnabled(Logger.ERROR)){
-        JSch.getLogger().log(Logger.ERROR, 
-                             "ChannelForwardedTCPIP: "+Util.byte2str(addr)+":"+port+" is not registered.");
+      if(LOG.isErrorEnabled()){
+        LOG.error(Util.byte2str(addr)+":"+port+" is not registered.");
       }
     }
   }

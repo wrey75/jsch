@@ -29,7 +29,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.oxande.jsch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class UserAuthNone extends UserAuth{
+    private static final Logger LOG = LoggerFactory.getLogger(UserAuthNone.class);
+
   private static final int SSH_MSG_SERVICE_ACCEPT=                  6;
   private String methods=null;
 
@@ -45,10 +50,8 @@ class UserAuthNone extends UserAuth{
     buf.putString(Util.str2byte("ssh-userauth"));
     session.write(packet);
 
-    if(JSch.getLogger().isEnabled(Logger.INFO)){
-      JSch.getLogger().log(Logger.INFO, 
-                           "SSH_MSG_SERVICE_REQUEST sent");
-    }
+    LOG.debug("SSH_MSG_SERVICE_REQUEST sent");
+
 
     // receive
     // byte      SSH_MSG_SERVICE_ACCEPT(6)
@@ -58,10 +61,7 @@ class UserAuthNone extends UserAuth{
 
     boolean result=(command==SSH_MSG_SERVICE_ACCEPT);
 
-    if(JSch.getLogger().isEnabled(Logger.INFO)){
-      JSch.getLogger().log(Logger.INFO, 
-                           "SSH_MSG_SERVICE_ACCEPT received");
-    }
+    LOG.debug("SSH_MSG_SERVICE_ACCEPT received");
     if(!result)
       return false;
 
