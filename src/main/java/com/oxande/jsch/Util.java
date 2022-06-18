@@ -144,7 +144,7 @@ class Util{
     }
     return glob(pattern, pattern_index, name, name_index);
   }
-  static private boolean glob(byte[] pattern, int pattern_index,
+  private static boolean glob(byte[] pattern, int pattern_index,
 			      byte[] name, int name_index){
     //System.err.println("glob: "+new String(pattern)+", "+pattern_index+" "+new String(name)+", "+name_index);
 
