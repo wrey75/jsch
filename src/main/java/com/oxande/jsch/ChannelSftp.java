@@ -30,12 +30,13 @@ package com.oxande.jsch;
 
 import java.io.*;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 
 public class ChannelSftp extends ChannelSession{
-
-  static private final int LOCAL_MAXIMUM_PACKET_SIZE=32*1024;
-  static private final int LOCAL_WINDOW_SIZE_MAX=(64*LOCAL_MAXIMUM_PACKET_SIZE);
+  private static final int LOCAL_MAXIMUM_PACKET_SIZE=32*1024;
+  private static final int LOCAL_WINDOW_SIZE_MAX=(64*LOCAL_MAXIMUM_PACKET_SIZE);
 
   private static final byte SSH_FXP_INIT=               1;
   private static final byte SSH_FXP_VERSION=            2;
@@ -177,9 +178,7 @@ public class ChannelSftp extends ChannelSession{
   private String home;
   private String lcwd;
 
-  private static final String UTF8="UTF-8";
-  private String fEncoding=UTF8;
-  private boolean fEncoding_is_utf8=true;
+  private Charset fEncoding=StandardCharsets.UTF_8;
 
   private RequestQueue rq = new RequestQueue(16);
 
@@ -1603,7 +1602,7 @@ public class ChannelSftp extends ChannelSession{
            return v;
            */
 
-           if(fEncoding_is_utf8){
+           if(isUtf8Encooding()){
              pattern=_pattern_utf8[0];
              pattern=Util.unquote(pattern);
            }
@@ -1693,9 +1692,9 @@ public class ChannelSftp extends ChannelSession{
            }
            else{
              byte[] _filename=filename;
-             if(!fEncoding_is_utf8){
+             if(!isUtf8Encooding()){
                f=Util.byte2str(_filename, fEncoding);
-               _filename=Util.str2byte(f, UTF8);
+               _filename=Util.str2byte(f, StandardCharsets.UTF_8);
              }
              find=Util.glob(pattern, _filename);
            }
@@ -1746,6 +1745,10 @@ public class ChannelSftp extends ChannelSession{
          throw new SftpException(SSH_FX_FAILURE, "", (Throwable)e);
        throw new SftpException(SSH_FX_FAILURE, "");
      }
+   }
+
+   public boolean isUtf8Encooding() {
+     return StandardCharsets.UTF_8.equals(fEncoding);
    }
 
    public String readlink(String path) throws SftpException{
@@ -2765,9 +2768,9 @@ public class ChannelSftp extends ChannelSession{
         String f=null;
         boolean found=false;
 
-        if(!fEncoding_is_utf8){
+        if(!isUtf8Encooding()){
           f=Util.byte2str(filename, fEncoding);
-          _filename=Util.str2byte(f, UTF8);
+          _filename=Util.str2byte(f, StandardCharsets.UTF_8);
         }
         found=Util.glob(pattern, _filename);
 
@@ -2807,7 +2810,7 @@ public class ChannelSftp extends ChannelSession{
   private Vector glob_local(String _path) throws Exception{
 //System.err.println("glob_local: "+_path);
     Vector v=new Vector();
-    byte[] path=Util.str2byte(_path, UTF8);
+    byte[] path=Util.str2byte(_path, StandardCharsets.UTF_8);
     int i=path.length-1;
     while(i>=0){
       if(path[i]!='*' && path[i]!='?'){
@@ -2850,11 +2853,11 @@ public class ChannelSftp extends ChannelSession{
 
 //System.err.println("dir: "+new String(dir)+" pattern: "+new String(pattern));
     try{
-      String[] children=(new File(Util.byte2str(dir, UTF8))).list();
+      String[] children=(new File(Util.byte2str(dir, StandardCharsets.UTF_8))).list();
       String pdir=Util.byte2str(dir)+file_separator;
       for(int j=0; j<children.length; j++){
 //System.err.println("children: "+children[j]);
-	if(Util.glob(pattern, Util.str2byte(children[j], UTF8))){
+	if(Util.glob(pattern, Util.str2byte(children[j], StandardCharsets.UTF_8))){
 	  v.addElement(pdir+children[j]);
 	}
       }
@@ -2869,7 +2872,7 @@ public class ChannelSftp extends ChannelSession{
        buf.getLength()>=4){   // SSH_FXP_STATUS packet.
       byte[] str=buf.getString();
       //byte[] tag=buf.getString();
-      throw new SftpException(i, Util.byte2str(str, UTF8));
+      throw new SftpException(i, Util.byte2str(str, StandardCharsets.UTF_8));
     }
     else{
       throw new SftpException(i, "Failure");
@@ -2885,7 +2888,7 @@ public class ChannelSftp extends ChannelSession{
   }
 
   private boolean isPattern(String path, byte[][] utf8){
-    byte[] _path=Util.str2byte(path, UTF8);
+    byte[] _path=Util.str2byte(path, StandardCharsets.UTF_8);
     if(utf8!=null)
       utf8[0]=_path;
     return isPattern(_path);
@@ -2973,18 +2976,16 @@ public class ChannelSftp extends ChannelSession{
     return server_version;
   }
 
-  public void setFilenameEncoding(String encoding) throws SftpException{
+  public void setFilenameEncoding(Charset encoding) throws SftpException{
     int sversion=getServerVersion();
-    if(3 <= sversion && sversion <= 5 &&
-       !encoding.equals(UTF8)){
+    if(3 <= sversion && sversion <= 5 && !encoding.equals(StandardCharsets.UTF_8)){
       throw new SftpException(SSH_FX_FAILURE,
                               "The encoding can not be changed for this sftp server.");
     }
-    if(encoding.equals(UTF8)){
-      encoding=UTF8;
+    if(encoding.equals(StandardCharsets.UTF_8)){
+      encoding=StandardCharsets.UTF_8;
     }
     fEncoding=encoding;
-    fEncoding_is_utf8=fEncoding.equals(UTF8);
   }
 
   public String getExtension(String key){
