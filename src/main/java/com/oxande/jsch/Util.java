@@ -415,7 +415,7 @@ class Util{
     return byte2str(str, 0, str.length, StandardCharsets.UTF_8);
   }
 
-  public static String byte2str(byte[] str, int s, int l){
+  static String byte2str(byte[] str, int s, int l){
     return byte2str(str, s, l, StandardCharsets.UTF_8);
   }
 

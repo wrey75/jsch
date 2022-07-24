@@ -30,21 +30,14 @@ package com.oxande.jsch.jce;
 
 import com.oxande.jsch.Cipher;
 
-import javax.crypto.ShortBufferException;
 import javax.crypto.spec.*;
 
 public class AES128CBC implements Cipher {
   private static final int ivsize=16;
   private static final int bsize=16;
-  private javax.crypto.Cipher cipher;
-
-  @Override
-  public int getIVSize(){return ivsize;}
-
-  @Override
+  private javax.crypto.Cipher cipher;    
+  public int getIVSize(){return ivsize;} 
   public int getBlockSize(){return bsize;}
-
-  @Override
   public void init(int mode, byte[] key, byte[] iv) throws Exception{
     String pad="NoPadding";      
     byte[] tmp;
@@ -74,9 +67,7 @@ public class AES128CBC implements Cipher {
       throw e;
     }
   }
-
-  @Override
-  public void update(byte[] foo, int s1, int len, byte[] bar, int s2) throws ShortBufferException {
+  public void update(byte[] foo, int s1, int len, byte[] bar, int s2) throws Exception{
     cipher.update(foo, s1, len, bar, s2);
   }
 
