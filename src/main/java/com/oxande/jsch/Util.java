@@ -32,8 +32,6 @@ import java.net.Socket;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 class Util{
 
@@ -112,22 +110,22 @@ class Util{
     if(foo==null)
       return null;
     byte[] buf=Util.str2byte(foo);
-    List<String> bar=new ArrayList<>();
+    java.util.Vector bar=new java.util.Vector();
     int start=0;
     int index;
     while(true){
       index=foo.indexOf(split, start);
       if(index>=0){
-	bar.add(Util.byte2str(buf, start, index-start));
+	bar.addElement(Util.byte2str(buf, start, index-start));
 	start=index+1;
 	continue;
       }
-      bar.add(Util.byte2str(buf, start, buf.length-start));
+      bar.addElement(Util.byte2str(buf, start, buf.length-start));
       break;
     }
     String[] result=new String[bar.size()];
     for(int i=0; i<result.length; i++){
-      result[i]=bar.get(i);
+      result[i]=(String)(bar.elementAt(i));
     }
     return result;
   }
@@ -238,12 +236,13 @@ class Util{
           break;
 	}
       }
+      continue;
     }
 
     if(i==patternlen && j==namelen) 
       return true;
 
-    if((j>=namelen) &&  // name is end
+    if(!(j<namelen) &&  // name is end
        pattern[i]=='*'){
       boolean ok=true;
       while(i<patternlen){
@@ -261,7 +260,8 @@ class Util{
   static String quote(String path){
     byte[] _path=str2byte(path);
     int count=0;
-    for(byte b: _path){
+    for(int i=0;i<_path.length; i++){
+      byte b=_path[i];
       if(b=='\\' || b=='?' || b=='*')
         count++;
     }
@@ -306,7 +306,7 @@ class Util{
     return foo;
   }
 
-  private  static final String[] chars={
+  private static String[] chars={
     "0","1","2","3","4","5","6","7","8","9", "a","b","c","d","e","f"
   };
   static String getFingerPrint(HASH hash, byte[] data){
@@ -314,7 +314,7 @@ class Util{
       hash.init();
       hash.update(data, 0, data.length);
       byte[] foo=hash.digest();
-      StringBuilder sb=new StringBuilder();
+      StringBuffer sb=new StringBuffer();
       int bar;
       for(int i=0; i<foo.length;i++){
         bar=foo[i]&0xff;
@@ -329,7 +329,7 @@ class Util{
       return "???";
     }
   }
-  static boolean array_equals(byte[] foo, byte[] bar){
+  static boolean array_equals(byte[] foo, byte bar[]){
     int i=foo.length;
     if(i!=bar.length) return false;
     for(int j=0; j<i; j++){ if(foo[j]!=bar[j]) return false; }
@@ -346,7 +346,7 @@ class Util{
       catch(Exception e){
         String message=e.toString();
         if(e instanceof Throwable)
-          throw new JSchException(message, e);
+          throw new JSchException(message, (Throwable)e);
         throw new JSchException(message);
       }
     }
@@ -355,22 +355,24 @@ class Util{
     final Socket[] sockp=new Socket[1];
     final Exception[] ee=new Exception[1];
     String message="";
-    Thread tmp=new Thread(() -> {
-      sockp[0]=null;
-      try{
-        sockp[0]=new Socket(_host, _port);
-      }
-      catch(Exception e){
-        ee[0]=e;
-        if(sockp[0]!=null && sockp[0].isConnected()){
+    Thread tmp=new Thread(new Runnable(){
+        public void run(){
+          sockp[0]=null;
           try{
-            sockp[0].close();
+            sockp[0]=new Socket(_host, _port);
           }
-          catch(Exception eee){}
+          catch(Exception e){
+            ee[0]=e;
+            if(sockp[0]!=null && sockp[0].isConnected()){
+              try{
+                sockp[0].close();
+              }
+              catch(Exception eee){}
+            }
+            sockp[0]=null;
+          }
         }
-        sockp[0]=null;
-      }
-    });
+      });
     tmp.setName("Opening Socket "+host);
     tmp.start();
     try{ 
@@ -427,10 +429,10 @@ class Util{
   }
 
   static String toHex(byte[] str){
-    StringBuilder sb = new StringBuilder();
+    StringBuffer sb = new StringBuffer();
     for(int i = 0; i<str.length; i++){
       String foo = Integer.toHexString(str[i]&0xff);
-      sb.append("0x").append(foo.length() == 1 ? "0" : "").append(foo);
+      sb.append("0x"+(foo.length() == 1 ? "0" : "")+foo);
       if(i+1<str.length)
         sb.append(":");
     }
@@ -470,17 +472,14 @@ class Util{
     String[] stra=Util.split(str, ",");
     String result=null;
     loop:
-    for (String value : stra) {
-      for (String s : not_available) {
-        if (value.equals(s)) {
+    for(int i=0; i<stra.length; i++){
+      for(int j=0; j<not_available.length; j++){
+        if(stra[i].equals(not_available[j])){
           continue loop;
         }
       }
-      if (result == null) {
-        result = value;
-      } else {
-        result = result + "," + value;
-      }
+      if(result==null){ result=stra[i]; }
+      else{ result=result+","+stra[i]; }
     }
     return result;
   }
@@ -506,7 +505,8 @@ class Util{
   static byte[] fromFile(String _file) throws IOException {
     _file = checkTilde(_file);
     File file = new File(_file);
-    try(FileInputStream fis = new FileInputStream(_file)) {
+    FileInputStream fis = new FileInputStream(_file);
+    try {
       byte[] result = new byte[(int)(file.length())];
       int len=0;
       while(true){
@@ -517,6 +517,10 @@ class Util{
       }
       fis.close();
       return result;
+    }
+    finally {
+      if(fis!=null)
+        fis.close();
     }
   }
 }

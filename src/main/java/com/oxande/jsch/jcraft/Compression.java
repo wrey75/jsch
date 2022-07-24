@@ -29,9 +29,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.oxande.jsch.jcraft;
 import com.jcraft.jzlib.*;
+import com.oxande.jsch.*;
 
 public class Compression implements com.oxande.jsch.Compression {
-  private static final int BUF_SIZE=4096;
+  static private final int BUF_SIZE=4096;
   private final int buffer_margin=32+20; // AES256 + HMACSHA1
   private int type;
   private ZStream stream;
