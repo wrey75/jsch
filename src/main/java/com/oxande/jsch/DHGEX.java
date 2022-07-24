@@ -29,11 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.oxande.jsch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class DHGEX extends KeyExchange{
-  private static final Logger LOG = LoggerFactory.getLogger(DHGEX.class);
 
   private static final int SSH_MSG_KEX_DH_GEX_GROUP=               31;
   private static final int SSH_MSG_KEX_DH_GEX_INIT=                32;
@@ -101,7 +97,12 @@ public class DHGEX extends KeyExchange{
     buf.putInt(max);
     session.write(packet); 
 
-    LOG.debug("SSH_MSG_KEX_DH_GEX_REQUEST({}<{}<{}) sent, expecting SSH_MSG_KEX_DH_GEX_GROUP", min, preferred,max);
+    if(JSch.getLogger().isEnabled(Logger.INFO)){
+      JSch.getLogger().log(Logger.INFO, 
+                           "SSH_MSG_KEX_DH_GEX_REQUEST("+min+"<"+preferred+"<"+max+") sent");
+      JSch.getLogger().log(Logger.INFO, 
+                           "expecting SSH_MSG_KEX_DH_GEX_GROUP");
+    }
 
     state=SSH_MSG_KEX_DH_GEX_GROUP;
   }
@@ -138,7 +139,12 @@ public class DHGEX extends KeyExchange{
       buf.putMPInt(e);
       session.write(packet);
 
-      LOG.debug("SSH_MSG_KEX_DH_GEX_INIT sent, expecting SSH_MSG_KEX_DH_GEX_REPLY");
+      if(JSch.getLogger().isEnabled(Logger.INFO)){
+        JSch.getLogger().log(Logger.INFO, 
+                             "SSH_MSG_KEX_DH_GEX_INIT sent");
+        JSch.getLogger().log(Logger.INFO, 
+                             "expecting SSH_MSG_KEX_DH_GEX_REPLY");
+      }
 
       state=SSH_MSG_KEX_DH_GEX_REPLY;
       return true;

@@ -29,11 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.oxande.jsch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class DHG14 extends KeyExchange{
-  private static final Logger LOG = LoggerFactory.getLogger(DHG14.class);
 
   static final byte[] g={ 2 };
   static final byte[] p={
@@ -137,8 +133,12 @@ public class DHG14 extends KeyExchange{
 
     session.write(packet);
 
-    LOG.debug("SSH_MSG_KEXDH_INIT sent, expecting SSH_MSG_KEXDH_REPLY");
-
+    if(JSch.getLogger().isEnabled(Logger.INFO)){
+      JSch.getLogger().log(Logger.INFO, 
+                           "SSH_MSG_KEXDH_INIT sent");
+      JSch.getLogger().log(Logger.INFO, 
+                           "expecting SSH_MSG_KEXDH_REPLY");
+    }
 
     state=SSH_MSG_KEXDH_REPLY;
   }

@@ -180,6 +180,12 @@ public class JSch{
 
   private HostKeyRepository known_hosts=null;
 
+  private static final Logger DEVNULL=new Logger(){
+      public boolean isEnabled(int level){return false;}
+      public void log(int level, String message){}
+    };
+  static Logger logger=DEVNULL;
+
   public JSch(){
     /*
     // The JCE of Sun's Java5 on Mac OS X has the resource leak bug
@@ -564,6 +570,22 @@ public class JSch{
    */
   public static void setConfig(String key, String value){
     config.put(key, value);
+  }
+
+  /**
+   * Sets the logger
+   *
+   * @param logger logger
+   *
+   * @see Logger
+   */
+  public static void setLogger(Logger logger){
+    if(logger==null) logger=DEVNULL;
+    JSch.logger=logger;
+  }
+
+  static Logger getLogger(){
+    return logger;
   }
 
   /**
