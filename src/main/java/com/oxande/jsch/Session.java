@@ -190,7 +190,13 @@ public class Session implements Runnable{
 
     io=new IO();
     if(random==null){
-      random = jsch.provideRandomEngine();
+      try{
+	Class c=Class.forName(getConfig("random"));
+        random=(Random)(c.newInstance());
+      }
+      catch(Exception e){ 
+        throw new JSchException(e.toString(), e);
+      }
     }
     Packet.setRandom(random);
 
