@@ -1,38 +1,25 @@
+# JSch Java Secure Channel
 
-                                      JSch
-
-                                Java Secure Channel
-                         by ymnk@jcraft.com, JCraft,Inc.
-
-                            http://www.jcraft.com/jsch/
-
-Last modified: Thu Mar 18 13:58:16 UTC 2015
-
-
-Description
-===========
+## Description
 JSch is a pure Java implementation of SSH2.  JSch allows you to 
 connect to an sshd server and use port forwarding, X11 forwarding, 
 file transfer, etc., and you can integrate its functionality
 into your own Java programs. JSch is licensed under BSD style license.
 
 
-Documentation
-=============
+## Documentation
 * README files all over the source tree have info related to the stuff
   in the directories. 
 * ChangeLog: what changed from the previous version?
 
 
-Directories & Files in the Source Tree
-======================================
+## Directories & Files in the Source Tree
 * src/com/ has source trees of JSch
 * example/ has some samples, which demonstrate the usages.
 * tools/ has scripts for Ant.
 
 
-Why JSch?
-==========
+## Why JSch?
 Our intension in developing this stuff is to enable users of our pure
 java X servers, WiredX(http://wiredx.net/) and WeirdX, to enjoy secure X
 sessions.  Our efforts have mostly targeted the SSH2 protocol in relation
@@ -40,8 +27,7 @@ to X Window System and X11 forwarding.  Of course, we are also interested in
 adding other functionality - port forward, file transfer, terminal emulation, etc.
 
 
-Features
-========
+## Features
 * JSch is in pure Java, but it depends on JavaTM Cryptography
   Extension (JCE).  JSch is know to work with:
   o J2SE 1.4.0 or later (no additional libraries required).
@@ -90,8 +76,7 @@ Features
 * JSch is licensed under BSD style license(refer to LICENSE.txt).
 
 
-How To Try
-==========
+## How To Try
 This archive does not include java byte code, so please compile
 the source code by your self.
   $ cd jsch-?.?.?/src
@@ -100,8 +85,7 @@ the source code by your self.
 JSch can do.  Please refer to '/examples/README' file.
 
 
-AES cipher
-==========
+## AES cipher
 JSch supports aes128-cbc,aes192-cbc,aes256-cbc,aes128-ctr,aes192-ctr,
 aes256-ctr but you require AES support in your J2SE to choose some of them.  
 If you are using Sun's J2SE, J2SE 1.4.2 or later is required.  
@@ -115,8 +99,7 @@ on
 we can enjoy 'aes256-cbc,aes256-ctr'.
 
 
-Stream Forwarding
-=================
+## Stream Forwarding
 JSch has a unique functionality, Stream Forwarding.
 Stream Forwarding allows you to plug Java I/O streams directly into a remote TCP
 port without assigning and opening a local TCP port.
@@ -128,14 +111,12 @@ A sample program, /example/StreamForwarding.java , demonstrates
 this functionality.
 
 
-Generating Authentication Keys
-==============================
+## Generating Authentication Keys
 JSch allows you to generate DSA and RSA key pairs, which are in OpenSSH format.
 Please refer to 'examples/KeyGen.java'.
 
 
-Packet Compression
-==================
+## Packet Compression
 According to the draft from IETF sesch working group, the packet
 compression can be applied to each data stream directions; from sshd
 server to ssh client and from ssh client to sshd server.  So, jsch
@@ -147,8 +128,7 @@ the compression for this direction, you may be able to save some CPU time.
 Please refer to a sample program 'examples/Compression.java'.
 
 
-Property
-========
+## Property
 By setting properties, you can control the behavior of jsch.
 Here is an example of enabling the packet compression,
 
@@ -171,10 +151,10 @@ Current release has supported following properties,
   from jsch to sshd.
 * StrictHostKeyChecking: ask | yes | no
   default: ask
-  If this property is set to ``yes'', jsch will never automatically add
+  If this property is set to `yes`, jsch will never automatically add
   host keys to the $HOME/.ssh/known_hosts file, and refuses to connect
   to hosts whose host key has changed.  This property forces the user
-  to manually add all new hosts.  If this property is set to ``no'', 
+  to manually add all new hosts.  If this property is set to `no`, 
   jsch will automatically add new host keys to the user known hosts
   files.  If this property is set to ``ask'', new  host keys will be
   added to the user known host files only after the user has confirmed 
@@ -182,22 +162,19 @@ Current release has supported following properties,
   to hosts whose host key has changed.
 
 
-TODO
-====
+## TODO
 * re-implementation with java.nio.
 * replacing cipher, hash by JCE with pure Java code.
 * SSH File Transfer Protocol version 4.
 * error handling.
 
 
-Copyrights & Disclaimers
-========================
+## Copyrights & Disclaimers
 JSch is copyrighted by ymnk, JCraft,Inc. and is licensed through BSD style license.
 Read the LICENSE.txt file for the complete license.
 
 
-Credits and Acknowledgments
-============================
+## Credits and Acknowledgments
 JSch has been developed by ymnk@jcraft.com and it can not be hacked
 without several help.
 * First of all, we want to thank JCE team at Sun Microsystems.
@@ -224,6 +201,6 @@ without several help.
 If you have any comments, suggestions and questions, write us 
 at jsch@jcraft.com
 
-
-``SSH is a registered trademark and Secure Shell is a trademark of
-SSH Communications Security Corp (www.ssh.com)''.
+## NOTES
+NOTE: SSH is a registered trademark and Secure Shell is a trademark of
+SSH Communications Security Corp (www.ssh.com).
