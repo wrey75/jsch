@@ -69,7 +69,7 @@ public class SftpATTRS {
   private static final int pmask = 0xFFF;
 
   public String getPermissionsString() {
-    StringBuilder buf = new StringBuilder(10);
+    StringBuffer buf = new StringBuffer(10);
 
     if(isDir()) buf.append('d');
     else if(isLink()) buf.append('l');

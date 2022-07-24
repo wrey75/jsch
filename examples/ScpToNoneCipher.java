@@ -108,7 +108,7 @@ public class ScpToNoneCipher{
     if(b==-1) return b;
 
     if(b==1 || b==2){
-      StringBuilder sb=new StringBuilder();
+      StringBuffer sb=new StringBuffer();
       int c;
       do {
 	c=in.read();
