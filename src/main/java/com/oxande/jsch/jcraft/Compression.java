@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.oxande.jsch.jcraft;
 import com.jcraft.jzlib.*;
-import com.oxande.jsch.*;
+import com.jcraft.jsch.*;
 
 public class Compression implements com.oxande.jsch.Compression {
   static private final int BUF_SIZE=4096;
