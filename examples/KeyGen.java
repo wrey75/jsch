@@ -1,3 +1,4 @@
+/* -*-mode:java; c-basic-offset:2; indent-tabs-mode:nil -*- */
 /**
  * This progam will demonstrate the DSA keypair generation. 
  *   $ CLASSPATH=.:../build javac KeyGen.java

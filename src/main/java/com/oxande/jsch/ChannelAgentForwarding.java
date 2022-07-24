@@ -1,3 +1,4 @@
+/* -*-mode:java; c-basic-offset:2; indent-tabs-mode:nil -*- */
 /*
 Copyright (c) 2006-2018 ymnk, JCraft,Inc. All rights reserved.
 

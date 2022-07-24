@@ -1,3 +1,4 @@
+/* -*-mode:java; c-basic-offset:2; indent-tabs-mode:nil -*- */
 /**
  * This program will demonstrate the file transfer from remote to local
  *   $ CLASSPATH=.:../build javac ScpFrom.java

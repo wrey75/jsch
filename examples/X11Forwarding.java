@@ -1,3 +1,4 @@
+/* -*-mode:java; c-basic-offset:2; indent-tabs-mode:nil -*- */
 /**
  * This program will demonstrate X11 forwarding.
  *   $ CLASSPATH=.:../build javac X11Forwarding.java 

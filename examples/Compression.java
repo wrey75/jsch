@@ -1,3 +1,4 @@
+/* -*-mode:java; c-basic-offset:2; indent-tabs-mode:nil -*- */
 /**
  * This program will demonstrate the packet compression.
  *   $ CLASSPATH=.:../build javac Compression.java

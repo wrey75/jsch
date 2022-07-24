@@ -1,3 +1,4 @@
+/* -*-mode:java; c-basic-offset:2; indent-tabs-mode:nil -*- */
 /**
  * This program will demonstrate the ssh session via HTTP proxy.
  *   $ CLASSPATH=.:../build javac ViaHTTP.java 

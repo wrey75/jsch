@@ -1,3 +1,4 @@
+/* -*-mode:java; c-basic-offset:2; indent-tabs-mode:nil -*- */
 /**
  * This program will demonstrate the user authentification by public key.
  *   $ CLASSPATH=.:../build javac UserAuthPubKey.java
