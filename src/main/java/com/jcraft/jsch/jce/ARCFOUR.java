@@ -63,7 +63,7 @@ public class ARCFOUR implements Cipher{
       throw e;
     }
   }
-  public void update(byte[] foo, int s1, int len, byte[] bar, int s2) throws Exception{
+  public void update(byte[] foo, int s1, int len, byte[] bar, int s2) throws ShortBufferException{
     cipher.update(foo, s1, len, bar, s2);
   }
   public boolean isCBC(){return false; }

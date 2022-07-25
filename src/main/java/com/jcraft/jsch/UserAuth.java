@@ -29,6 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.jcraft.jsch2.ISession;
+
 public abstract class UserAuth{
   protected static final int SSH_MSG_USERAUTH_REQUEST=               50;
   protected static final int SSH_MSG_USERAUTH_FAILURE=               51;
@@ -43,9 +45,9 @@ public abstract class UserAuth{
   protected Buffer buf;
   protected String username;
 
-  public boolean start(Session session) throws Exception{
+  public boolean start(ISession session) throws Exception{
     this.userinfo=session.getUserInfo();
-    this.packet=session.packet;
+    this.packet=session.getPacket();
     this.buf=packet.getBuffer();
     this.username=session.getUserName();
     return true;

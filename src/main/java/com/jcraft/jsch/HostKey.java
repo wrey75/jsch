@@ -115,7 +115,7 @@ public class HostKey{
   public String getComment(){ return comment; }
   public String getMarker(){ return marker; }
 
-  boolean isMatched(String _host){
+  boolean isMatched(MAC hmacsha1, String _host){
     return isIncluded(_host);
   }
 

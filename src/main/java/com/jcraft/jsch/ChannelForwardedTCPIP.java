@@ -29,6 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.jcraft.jsch2.ISession;
+
 import java.net.*;
 import java.io.*;
 import java.util.Vector;
@@ -164,7 +166,7 @@ public class ChannelForwardedTCPIP extends Channel{
     }
   }
 
-  private static Config getPort(Session session, String address_to_bind, int rport){
+  private static Config getPort(ISession session, String address_to_bind, int rport){
     synchronized(pool){
       for(int i=0; i<pool.size(); i++){
         Config bar = (Config)(pool.elementAt(i));
@@ -254,7 +256,7 @@ public class ChannelForwardedTCPIP extends Channel{
   static void delPort(Session session, int rport){
     delPort(session, null, rport);
   }
-  static void delPort(Session session, String address_to_bind, int rport){
+  static void delPort(ISession session, String address_to_bind, int rport){
     synchronized(pool){
       Config foo = getPort(session, normalize(address_to_bind), rport);
       if(foo == null)

@@ -29,6 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import java.util.List;
 import java.util.Vector;
 
 class UserAuthPublicKey extends UserAuth{
@@ -36,7 +37,7 @@ class UserAuthPublicKey extends UserAuth{
   public boolean start(Session session) throws Exception{
     super.start(session);
 
-    Vector identities=session.getIdentityRepository().getIdentities();
+    Vector<Identity> identities=session.getIdentityRepository().getIdentities();
 
     byte[] passphrase=null;
     byte[] _username=null;
@@ -56,7 +57,7 @@ class UserAuthPublicKey extends UserAuth{
           return false;
         }
 
-        Identity identity=(Identity)(identities.elementAt(i));
+        Identity identity=identities.get(i);
         byte[] pubkeyblob=identity.getPublicKeyBlob();
 
         if(pubkeyblob!=null){

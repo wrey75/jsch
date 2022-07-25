@@ -29,6 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.jcraft.jsch2.ISession;
+
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.InputStream;
@@ -79,7 +81,7 @@ public abstract class Channel implements Runnable{
     }
     return null;
   }
-  static Channel getChannel(int id, Session session){
+  static Channel getChannel(int id, ISession session){
     synchronized(pool){
       for(int i=0; i<pool.size(); i++){
         Channel c=(Channel)(pool.elementAt(i));

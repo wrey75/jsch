@@ -30,13 +30,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch;
 
 import java.net.*;
+import java.util.Map;
 
 class ChannelX11 extends Channel{
 
-  static private final int LOCAL_WINDOW_SIZE_MAX=0x20000;
-  static private final int LOCAL_MAXIMUM_PACKET_SIZE=0x4000;
+  private static final int LOCAL_WINDOW_SIZE_MAX=0x20000;
+  private static final int LOCAL_MAXIMUM_PACKET_SIZE=0x4000;
 
-  static private final int TIMEOUT=10*1000;
+  private static final int TIMEOUT=10*1000;
 
   private static String host="127.0.0.1";
   private static int port=6000;
@@ -46,8 +47,8 @@ class ChannelX11 extends Channel{
   static byte[] cookie=null;
   private static byte[] cookie_hex=null;
 
-  private static java.util.Hashtable faked_cookie_pool=new java.util.Hashtable();
-  private static java.util.Hashtable faked_cookie_hex_pool=new java.util.Hashtable();
+  private static Map<Session,byte[]> faked_cookie_pool=new java.util.Hashtable<>();
+  private static Map<Session,byte[]> faked_cookie_hex_pool=new java.util.Hashtable<>();
 
   private static byte[] table={0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,
                                0x61,0x62,0x63,0x64,0x65,0x66};
@@ -106,7 +107,7 @@ System.err.println("");
     }
   }
 
-  ChannelX11(){
+  public ChannelX11(){
     super();
 
     setLocalWindowSizeMax(LOCAL_WINDOW_SIZE_MAX);

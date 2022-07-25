@@ -112,4 +112,20 @@ System.err.println("");
   Buffer getBuffer(){
     return buffer;
   }
+  
+  public int getBufferIndex() {
+    return buffer.index;
+  }
+
+  public void setBufferIndex(int index) {
+    buffer.index = index;
+  }
+  
+  public void setBufferData(byte[] data){
+    buffer.buffer = data;
+  }
+
+  public byte[] getBufferData(){
+    return buffer.buffer;
+  }
 }

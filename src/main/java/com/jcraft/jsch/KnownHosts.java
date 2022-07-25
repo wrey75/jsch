@@ -29,38 +29,50 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.jcraft.jsch2.ISecureChannel;
+
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 public
 class KnownHosts implements HostKeyRepository{
   private static final String _known_hosts="known_hosts";
 
-  private JSch jsch=null;
+  private ISecureChannel jsch;
   private String known_hosts=null;
-  private java.util.Vector pool=null;
+  private java.util.Vector<HostKey> pool=null;
 
   private MAC hmacsha1=null;
 
-  KnownHosts(JSch jsch){
+  KnownHosts(ISecureChannel jsch){
     super();
     this.jsch=jsch;
     this.hmacsha1 = getHMACSHA1();
-    pool=new java.util.Vector();
+    pool=new java.util.Vector<>();
   }
 
   void setKnownHosts(String filename) throws JSchException{
-    try{
-      known_hosts = filename;
-      FileInputStream fis=new FileInputStream(Util.checkTilde(filename));
+    known_hosts = filename;
+    try(FileInputStream fis=new FileInputStream(Util.checkTilde(filename))){
       setKnownHosts(fis);
     }
     catch(FileNotFoundException e){
       // The non-existing file should be allowed.
-    } 
+    }
+    catch (IOException e) {
+      throw new JSchException(filename + ": " +e.getMessage());
+    }
   }
-  void setKnownHosts(InputStream input) throws JSchException{
-    pool.removeAllElements();
-    StringBuffer sb=new StringBuffer();
+
+  void setKnownHosts(InputStream input) throws JSchException {
+    this.pool = new Vector(loadKnownHosts(input));
+  }
+  
+  public static List<HostKey> loadKnownHosts(InputStream input) throws JSchException{
+    List<HostKey> pool = new ArrayList<>();
+    StringBuilder sb=new StringBuilder();
     byte i;
     int j;
     boolean error=false;
@@ -96,13 +108,13 @@ loop:
           i=buf[j];
 	  if(i==' '||i=='\t'){ j++; continue; }
 	  if(i=='#'){
-	    addInvalidLine(Util.byte2str(buf, 0, bufl));
+	    addInvalidLine(pool, Util.byte2str(buf, 0, bufl));
 	    continue loop;
 	  }
 	  break;
 	}
 	if(j>=bufl){ 
-	  addInvalidLine(Util.byte2str(buf, 0, bufl));
+	  addInvalidLine(pool, Util.byte2str(buf, 0, bufl));
 	  continue loop; 
 	}
 
@@ -114,7 +126,7 @@ loop:
 	}
 	host=sb.toString();
 	if(j>=bufl || host.length()==0){
-	  addInvalidLine(Util.byte2str(buf, 0, bufl));
+	  addInvalidLine(pool, Util.byte2str(buf, 0, bufl));
 	  continue loop; 
 	}
 
@@ -136,7 +148,7 @@ loop:
           }
           host=sb.toString();
           if(j>=bufl || host.length()==0){
-            addInvalidLine(Util.byte2str(buf, 0, bufl));
+            addInvalidLine(pool, Util.byte2str(buf, 0, bufl));
             continue loop; 
           }
 
@@ -160,7 +172,7 @@ loop:
 	}
 	else { j=bufl; }
 	if(j>=bufl){
-	  addInvalidLine(Util.byte2str(buf, 0, bufl));
+	  addInvalidLine(pool, Util.byte2str(buf, 0, bufl));
 	  continue loop; 
 	}
 
@@ -180,7 +192,7 @@ loop:
 	}
 	key=sb.toString();
 	if(key.length()==0){
-	  addInvalidLine(Util.byte2str(buf, 0, bufl));
+	  addInvalidLine(pool, Util.byte2str(buf, 0, bufl));
 	  continue loop; 
 	}
 
@@ -219,7 +231,7 @@ loop:
         hk = new HashedHostKey(marker, host, type, 
                                Util.fromBase64(Util.str2byte(key), 0, 
                                                key.length()), comment);
-	pool.addElement(hk);
+	pool.add(hk);
       }
       if(error){
 	throw new JSchException("KnownHosts: invalid format");
@@ -238,10 +250,11 @@ loop:
         throw new JSchException(e.toString(), (Throwable)e);
       }
     }
+    return pool;
   }
-  private void addInvalidLine(String line) throws JSchException {
+  private static void addInvalidLine(List<HostKey>pool, String line) throws JSchException {
     HostKey hk = new HostKey(line, HostKey.UNKNOWN, null);
-    pool.addElement(hk);
+    pool.add(hk);
   }
   String getKnownHostsFile(){ return known_hosts; }
   public String getKnownHostsRepositoryID(){ return known_hosts; }
@@ -263,7 +276,7 @@ loop:
     synchronized(pool){
       for(int i=0; i<pool.size(); i++){
         HostKey _hk=(HostKey)(pool.elementAt(i));
-        if(_hk.isMatched(host) && _hk.type==hk.type){
+        if(_hk.isMatched(getHMACSHA1(), host) && _hk.type==hk.type){
           if(Util.array_equals(_hk.key, key)){
             return OK;
           }
@@ -293,7 +306,7 @@ loop:
     synchronized(pool){
       for(int i=0; i<pool.size(); i++){
         hk=(HostKey)(pool.elementAt(i));
-        if(hk.isMatched(host) && hk.type==type){
+        if(hk.isMatched(getHMACSHA1(),host) && hk.type==type){
 /*
 	  if(Util.array_equals(hk.key, key)){ return; }
 	  if(hk.host.equals(host)){
@@ -360,7 +373,7 @@ loop:
 	HostKey hk=(HostKey)pool.elementAt(i);
 	if(hk.type==HostKey.UNKNOWN) continue;
 	if(host==null || 
-	   (hk.isMatched(host) && 
+	   (hk.isMatched(getHMACSHA1(), host) && 
 	    (type==null || hk.getType().equals(type)))){
           v.add(hk);
 	}
@@ -391,7 +404,7 @@ loop:
     for(int i=0; i<pool.size(); i++){
       HostKey hk=(HostKey)(pool.elementAt(i));
       if(host==null ||
-	 (hk.isMatched(host) && 
+	 (hk.isMatched(getHMACSHA1(), host) && 
 	  (type==null || (hk.getType().equals(type) &&
 			  (key==null || Util.array_equals(key, hk.key)))))){
         String hosts=hk.getHost();
@@ -496,12 +509,12 @@ loop:
     return hmacsha1;
   }
 
-  HostKey createHashedHostKey(String host, byte[]key) throws JSchException {
+  public HostKey createHashedHostKey(String host, byte[]key) throws JSchException {
     HashedHostKey hhk=new HashedHostKey(host, key);
-    hhk.hash();
+    hhk.hash(hmacsha1);
     return hhk;
   } 
-  class HashedHostKey extends HostKey{
+  static class HashedHostKey extends HostKey{
     private static final String HASH_MAGIC="|1|";
     private static final String HASH_DELIM="|";
 
@@ -534,11 +547,10 @@ loop:
       }
     }
 
-    boolean isMatched(String _host){
+    boolean isMatched(MAC macsha1, String _host){
       if(!hashed){
-        return super.isMatched(_host);
+        return super.isMatched(macsha1, _host);
       }
-      MAC macsha1=getHMACSHA1();
       try{
         synchronized(macsha1){
           macsha1.init(salt);
@@ -559,10 +571,9 @@ loop:
       return hashed;
     }
 
-    void hash(){
+    void hash(MAC macsha1){
       if(hashed)
         return;
-      MAC macsha1=getHMACSHA1();
       if(salt==null){
         Random random=Session.random;
         synchronized(random){

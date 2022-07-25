@@ -29,6 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.jcraft.jsch2.ISession;
+
 public abstract class KeyExchange{
 
   static final int PROPOSAL_KEX_ALGS=0;
@@ -61,14 +63,14 @@ public abstract class KeyExchange{
 
   public static final int STATE_END=0;
 
-  protected Session session=null;
+  protected ISession session=null;
   protected HASH sha=null;
   protected byte[] K=null;
   protected byte[] H=null;
   protected byte[] K_S=null;
 
-  public abstract void init(Session session, 
-			    byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception;
+  public abstract void init(ISession session,
+                            byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception;
   public abstract boolean next(Buffer buf) throws Exception;
 
   public abstract int getState();

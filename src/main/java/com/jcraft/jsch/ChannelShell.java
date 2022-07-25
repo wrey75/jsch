@@ -31,9 +31,9 @@ package com.jcraft.jsch;
 
 import java.util.*;
 
-public class ChannelShell extends ChannelSession{
+class ChannelShell extends ChannelSession{
 
-  ChannelShell(){
+  public ChannelShell(){
     super();
     pty=true;
   }
