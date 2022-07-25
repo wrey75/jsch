@@ -1,4 +1,4 @@
-package com.oxande.ssh;
+package com.jcraft.jsch2;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Packet;

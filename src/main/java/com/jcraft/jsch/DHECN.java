@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import com.oxande.ssh.ISession;
+import com.jcraft.jsch2.ISession;
 
 public abstract class DHECN extends KeyExchange{
 

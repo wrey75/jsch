@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import com.oxande.ssh.ConfigurationSupport;
+import com.jcraft.jsch2.ISecureChannel;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -40,20 +40,20 @@ public
 class KnownHosts implements HostKeyRepository{
   private static final String _known_hosts="known_hosts";
 
-  private ConfigurationSupport jsch;
+  private ISecureChannel jsch;
   private String known_hosts=null;
   private java.util.Vector<HostKey> pool=null;
 
   private MAC hmacsha1=null;
 
-  public KnownHosts(ConfigurationSupport jsch){
+  KnownHosts(ISecureChannel jsch){
     super();
     this.jsch=jsch;
     this.hmacsha1 = getHMACSHA1();
     pool=new java.util.Vector<>();
   }
 
-  public void setKnownHosts(String filename) throws JSchException{
+  void setKnownHosts(String filename) throws JSchException{
     known_hosts = filename;
     try(FileInputStream fis=new FileInputStream(Util.checkTilde(filename))){
       setKnownHosts(fis);
@@ -66,7 +66,7 @@ class KnownHosts implements HostKeyRepository{
     }
   }
 
-  public void setKnownHosts(InputStream input) throws JSchException {
+  void setKnownHosts(InputStream input) throws JSchException {
     this.pool = new Vector(loadKnownHosts(input));
   }
   

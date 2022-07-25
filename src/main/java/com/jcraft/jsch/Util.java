@@ -36,7 +36,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class Util{
+class Util{
 
   private static final byte[] b64 =Util.str2byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=");
   private static byte val(byte foo){
@@ -403,7 +403,7 @@ public class Util{
     return (str == null ? null : str.getBytes(encoding));
   }
 
-  public static byte[] str2byte(String str) {
+  static byte[] str2byte(String str) {
     return str2byte(str, StandardCharsets.UTF_8);
   }
 
@@ -456,7 +456,7 @@ public class Util{
     return bar;
   }
   */
-  public static void bzero(byte[] foo){
+  static void bzero(byte[] foo){
     if(foo!=null){
       Arrays.fill(foo, (byte) 0);
     }

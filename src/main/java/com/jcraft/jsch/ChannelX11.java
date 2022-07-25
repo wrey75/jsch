@@ -32,7 +32,7 @@ package com.jcraft.jsch;
 import java.net.*;
 import java.util.Map;
 
-public class ChannelX11 extends Channel{
+class ChannelX11 extends Channel{
 
   private static final int LOCAL_WINDOW_SIZE_MAX=0x20000;
   private static final int LOCAL_MAXIMUM_PACKET_SIZE=0x4000;
@@ -188,7 +188,7 @@ System.err.println("");
     return cache;
   }
 
-  public void write(byte[] foo, int s, int l) throws java.io.IOException {
+  void write(byte[] foo, int s, int l) throws java.io.IOException {
     //if(eof_local)return;
 
     if(init){

@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-public class UserAuthNone extends UserAuth{
+class UserAuthNone extends UserAuth{
   private static final int SSH_MSG_SERVICE_ACCEPT=                  6;
   private String methods=null;
 
@@ -123,7 +123,7 @@ public class UserAuthNone extends UserAuth{
    //throw new JSchException("USERAUTH fail");
     return false;
   }
-  public String getMethods(){
+  String getMethods(){
     return methods;
   }
 }

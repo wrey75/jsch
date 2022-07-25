@@ -29,8 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import com.oxande.ssh.ConfigurationSupport;
-import com.oxande.ssh.ISession;
+import com.jcraft.jsch2.ISecureChannel;
+import com.jcraft.jsch2.ISession;
 
 import javax.crypto.ShortBufferException;
 import java.io.*;
@@ -156,9 +156,9 @@ public class Session implements Runnable, ISession {
   String username=null;
   byte[] password=null;
 
-  ConfigurationSupport jsch;
+  ISecureChannel jsch;
 
-  public Session(ConfigurationSupport jsch, String username, String host, int port) throws JSchException{
+  Session(ISecureChannel jsch, String username, String host, int port) throws JSchException{
     super();
     this.jsch=jsch;
     buf=new Buffer();
@@ -2140,19 +2140,19 @@ break;
     return channel;
   } 
 
-  public static class GlobalRequestReply{
+  private static class GlobalRequestReply{
     private Thread thread=null;
     private int reply=-1;
     private int port=0;
-    public void setThread(Thread thread){
+    void setThread(Thread thread){
       this.thread=thread;
       this.reply=-1;
     }
-    public Thread getThread(){ return thread; }
+    Thread getThread(){ return thread; }
     void setReply(int reply){ this.reply=reply; }
-    public int getReply(){ return this.reply; }
-    public int getPort(){ return this.port; }
-    public void setPort(int port){ this.port=port; }
+    int getReply(){ return this.reply; }
+    int getPort(){ return this.port; }
+    void setPort(int port){ this.port=port; }
   }
   private GlobalRequestReply grr=new GlobalRequestReply();
   private int _setPortForwardingR(String bind_address, int rport) throws JSchException{

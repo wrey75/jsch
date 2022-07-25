@@ -1,4 +1,4 @@
-package com.oxande.ssh;
+package com.jcraft.jsch2;
 
 import com.jcraft.jsch.ConfigRepository;
 import com.jcraft.jsch.HostKeyRepository;
@@ -7,7 +7,11 @@ import com.jcraft.jsch.JSchException;
 
 import java.lang.reflect.InvocationTargetException;
 
-public interface ConfigurationSupport {
+/**
+ * The interface for the secure channel. Used to remove some dependencies found
+ * on the origina {@link com.jcraft.jsch.JSch} class.
+ */
+public interface ISecureChannel {
 
   /**
    * Get the configuration value.
@@ -30,5 +34,5 @@ public interface ConfigurationSupport {
   void addIdentity(String identity) throws JSchException;
   
   void addSession(ISession session);
-  void removeSession(ISession session);
+  boolean removeSession(ISession session);
 }

@@ -37,7 +37,7 @@ class UserAuthPublicKey extends UserAuth{
   public boolean start(Session session) throws Exception{
     super.start(session);
 
-    List<Identity> identities=session.getIdentityRepository().getIdentities();
+    Vector<Identity> identities=session.getIdentityRepository().getIdentities();
 
     byte[] passphrase=null;
     byte[] _username=null;
@@ -57,7 +57,7 @@ class UserAuthPublicKey extends UserAuth{
           return false;
         }
 
-        Identity identity=(Identity)(identities.get(i));
+        Identity identity=identities.get(i);
         byte[] pubkeyblob=identity.getPublicKeyBlob();
 
         if(pubkeyblob!=null){

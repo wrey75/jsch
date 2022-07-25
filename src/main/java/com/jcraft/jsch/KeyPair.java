@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import com.oxande.ssh.ConfigurationSupport;
+import com.jcraft.jsch2.ISecureChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,10 +55,10 @@ public abstract class KeyPair{
 
   private static final byte[] cr=Util.str2byte("\n");
 
-  public static KeyPair genKeyPair(ConfigurationSupport jsch, int type) throws JSchException{
+  public static KeyPair genKeyPair(ISecureChannel jsch, int type) throws JSchException{
     return genKeyPair(jsch, type, 1024);
   }
-  public static KeyPair genKeyPair(ConfigurationSupport jsch, int type, int key_size) throws JSchException{
+  public static KeyPair genKeyPair(ISecureChannel jsch, int type, int key_size) throws JSchException{
     KeyPair kpair=null;
     if(type==DSA){ kpair=new KeyPairDSA(jsch); }
     else if(type==RSA){ kpair=new KeyPairRSA(jsch); }
@@ -90,14 +90,14 @@ public abstract class KeyPair{
 
   protected String publicKeyComment = "no comment";
 
-  ConfigurationSupport jsch;
+  ISecureChannel jsch;
   private Cipher cipher;
   private HASH hash;
   private Random random;
 
   private byte[] passphrase;
 
-  public KeyPair(ConfigurationSupport jsch){
+  public KeyPair(ISecureChannel jsch){
     this.jsch=jsch;
   }
 
@@ -528,14 +528,14 @@ public abstract class KeyPair{
     return !encrypted;
   }
 
-  public static KeyPair load(ConfigurationSupport jsch, String prvkey) throws JSchException{
+  public static KeyPair load(ISecureChannel jsch, String prvkey) throws JSchException{
     String pubkey=prvkey+".pub";
     if(!new File(pubkey).exists()){
       pubkey=null;
     }
     return load(jsch, prvkey, pubkey);
   }
-  public static KeyPair load(ConfigurationSupport jsch, String prvfile, String pubfile) throws JSchException{
+  public static KeyPair load(ISecureChannel jsch, String prvfile, String pubfile) throws JSchException{
 
     byte[] prvkey=null;
     byte[] pubkey=null;
@@ -569,7 +569,7 @@ public abstract class KeyPair{
     }
   }
 
-  public static KeyPair load(ConfigurationSupport jsch, byte[] prvkey, byte[] pubkey) throws JSchException{
+  public static KeyPair load(ISecureChannel jsch, byte[] prvkey, byte[] pubkey) throws JSchException{
 
     byte[] iv=new byte[8];       // 8
     boolean encrypted=true;
@@ -989,7 +989,7 @@ public abstract class KeyPair{
     "Private-MAC: "
   };
 
-  static KeyPair loadPPK(ConfigurationSupport jsch, byte[] buf) throws JSchException {
+  static KeyPair loadPPK(ISecureChannel jsch, byte[] buf) throws JSchException {
     byte[] pubkey = null;
     byte[] prvkey = null;
     int lines = 0;

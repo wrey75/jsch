@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import com.oxande.ssh.ConfigurationSupport;
+import com.jcraft.jsch2.ISecureChannel;
 
 import java.math.BigInteger;
 
@@ -46,11 +46,11 @@ public class KeyPairRSA extends KeyPair{
 
   private int key_size=1024;
 
-  public KeyPairRSA(ConfigurationSupport jsch){
+  public KeyPairRSA(ISecureChannel jsch){
     this(jsch, null, null, null);
   }
 
-  public KeyPairRSA(ConfigurationSupport jsch,
+  public KeyPairRSA(ISecureChannel jsch,
                     byte[] n_array,
                     byte[] pub_array,
                     byte[] prv_array){
@@ -358,7 +358,7 @@ public class KeyPairRSA extends KeyPair{
     return null;
   }
 
-  static KeyPair fromSSHAgent(ConfigurationSupport jsch, Buffer buf) throws JSchException {
+  static KeyPair fromSSHAgent(ISecureChannel jsch, Buffer buf) throws JSchException {
 
     byte[][] tmp = buf.getBytes(8, "invalid key format");
 

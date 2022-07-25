@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import com.oxande.ssh.ISession;
+import com.jcraft.jsch2.ISession;
 
 import java.net.*;
 import java.io.*;
@@ -201,7 +201,7 @@ public class ChannelForwardedTCPIP extends Channel{
     return bar;
   }
 
-  public static String normalize(String address){
+  static String normalize(String address){
     if(address==null){ return "localhost"; }
     else if(address.length()==0 || address.equals("*")){ return ""; }
     else{ return address; }

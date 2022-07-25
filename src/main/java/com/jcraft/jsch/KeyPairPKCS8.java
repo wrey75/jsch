@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import com.oxande.ssh.ConfigurationSupport;
+import com.jcraft.jsch2.ISecureChannel;
 
 import java.util.Vector;
 import java.math.BigInteger;
@@ -77,7 +77,7 @@ public class KeyPairPKCS8 extends KeyPair {
 
   private KeyPair kpair = null;
 
-  public KeyPairPKCS8(ConfigurationSupport jsch){
+  public KeyPairPKCS8(ISecureChannel jsch){
     super(jsch);
   }
 

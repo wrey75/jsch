@@ -29,19 +29,20 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import com.oxande.ssh.ConfigurationSupport;
+import com.jcraft.jsch2.ISecureChannel;
+import com.jcraft.jsch2.ISession;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Vector;
 
-public class JSch implements ConfigurationSupport {
+public class JSch implements ISecureChannel {
   /**
    * The version number.
    */
-  public static final String VERSION  = "0.1.54";
+  public static final String VERSION  = "0.2.01";
 
-  static java.util.Hashtable config=new java.util.Hashtable();
+  static java.util.Hashtable<String,String> config=new java.util.Hashtable<>();
   static{
     config.put("kex", "ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1");
     config.put("server_host_key", "ssh-rsa,ssh-dss,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521");
@@ -141,7 +142,7 @@ public class JSch implements ConfigurationSupport {
     config.put("ClearAllForwardings", "no");
   }
 
-  private java.util.Vector sessionPool = new java.util.Vector();
+  private java.util.Vector<ISession> sessionPool = new java.util.Vector();
 
   private IdentityRepository defaultIdentityRepository =
     new LocalIdentityRepository(this);
@@ -278,13 +279,15 @@ public class JSch implements ConfigurationSupport {
     return s;
   }
 
-  protected void addSession(Session session){
+  @Override
+  public void addSession(ISession session){
     synchronized(sessionPool){
       sessionPool.addElement(session);
     }
   }
 
-  protected boolean removeSession(Session session){
+  @Override
+  public boolean removeSession(ISession session){
     synchronized(sessionPool){
       return sessionPool.remove(session);
     }

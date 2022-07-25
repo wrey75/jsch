@@ -31,10 +31,10 @@ package com.jcraft.jsch;
 
 public class Packet{
 
-  public static Random random=null;
-  public static void setRandom(Random foo){ random=foo;}
+  private static Random random=null;
+  static void setRandom(Random foo){ random=foo;}
 
-  public Buffer buffer;
+  Buffer buffer;
   byte[] ba4=new byte[4]; 
   public Packet(Buffer buffer){
     this.buffer=buffer;
@@ -42,7 +42,7 @@ public class Packet{
   public void reset(){
     buffer.index=5;
   }
-  public void padding(int bsize){
+  void padding(int bsize){
     int len=buffer.index;
     int pad=(-len)&(bsize-1);
     if(pad<bsize){
@@ -68,7 +68,7 @@ System.err.println("");
 */
   }
 
-  public int shift(int len, int bsize, int mac){
+  int shift(int len, int bsize, int mac){
     int s=len+5+9;
     int pad=(-s)&(bsize-1);
     if(pad<bsize)pad+=bsize;
@@ -109,7 +109,7 @@ System.err.println("");
     buffer.putInt(len);
     buffer.index=len+5+9;
   }
-  public Buffer getBuffer(){
+  Buffer getBuffer(){
     return buffer;
   }
   

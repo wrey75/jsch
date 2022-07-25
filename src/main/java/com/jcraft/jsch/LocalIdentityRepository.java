@@ -29,32 +29,35 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import com.oxande.ssh.ConfigurationSupport;
+import com.jcraft.jsch2.ISecureChannel;
 
 import java.util.List;
 import java.util.Vector;
 
-public class LocalIdentityRepository implements IdentityRepository {
+class LocalIdentityRepository implements IdentityRepository {
   private static final String NAME = "Local Identity Repository";
 
   private final List<Identity> identities = new Vector<>();
-  private ConfigurationSupport jsch;
+  private ISecureChannel jsch;
 
-  public LocalIdentityRepository(ConfigurationSupport jsch){
+  public LocalIdentityRepository(ISecureChannel jsch){
     this.jsch = jsch;
   }
 
+  @Override
   public String getName(){
     return NAME;
   }
 
+  @Override
   public int getStatus(){
     return RUNNING;
   }
 
-  public synchronized Vector getIdentities() {
+  @Override
+  public synchronized Vector<Identity> getIdentities() {
     removeDupulicates();
-    Vector v = new Vector();
+    Vector<Identity> v = new Vector();
     for(int i=0; i<identities.size(); i++){
       v.addElement(identities.get(i));
     }
@@ -69,10 +72,9 @@ public class LocalIdentityRepository implements IdentityRepository {
         return;
       }
       for(int i = 0; i<identities.size(); i++){
-        byte[] blob2 = ((Identity)identities.get(i)).getPublicKeyBlob();
+        byte[] blob2 = identities.get(i).getPublicKeyBlob();
         if(blob2 != null && Util.array_equals(blob1, blob2)){
-          if(!identity.isEncrypted() && 
-             ((Identity)identities.get(i)).isEncrypted()){
+          if(!identity.isEncrypted() && identities.get(i).isEncrypted()){
             remove(blob2);
           }
           else {  

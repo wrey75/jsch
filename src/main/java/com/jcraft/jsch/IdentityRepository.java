@@ -33,15 +33,15 @@ import java.util.List;
 import java.util.Vector;
 
 public interface IdentityRepository {
-  public static final int UNAVAILABLE=0;
-  public static final int NOTRUNNING=1;
-  public static final int RUNNING=2;
-  public String getName();
-  public int getStatus();
-  public Vector<Identity> getIdentities();
+  static final int UNAVAILABLE=0;
+  static final int NOTRUNNING=1;
+  static final int RUNNING=2;
+  String getName();
+  int getStatus();
+  Vector<Identity> getIdentities();
   boolean add(byte[] identity);
-  public boolean remove(byte[] blob);
-  public void removeAll();
+  boolean remove(byte[] blob);
+  void removeAll();
 
   /**
    * JSch will accept ciphered keys, but some implementations of
@@ -54,7 +54,7 @@ public interface IdentityRepository {
     private IdentityRepository ir;
     private Vector cache = new Vector();
     private boolean keep_in_cache = false;
-    public Wrapper(IdentityRepository ir){
+    Wrapper(IdentityRepository ir){
       this(ir, false);
     }
     Wrapper(IdentityRepository ir, boolean keep_in_cache){
