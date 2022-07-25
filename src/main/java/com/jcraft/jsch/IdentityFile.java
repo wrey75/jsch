@@ -29,25 +29,27 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.oxande.ssh.ConfigurationSupport;
+
 import java.io.*;
 
-class IdentityFile implements Identity{
-  private JSch jsch;
+public class IdentityFile implements Identity{
+  private ConfigurationSupport jsch;
   private KeyPair kpair;
   private String identity;
 
-  static IdentityFile newInstance(String prvfile, String pubfile, JSch jsch) throws JSchException{
+  static IdentityFile newInstance(String prvfile, String pubfile, ConfigurationSupport jsch) throws JSchException {
     KeyPair kpair = KeyPair.load(jsch, prvfile, pubfile);
     return new IdentityFile(jsch, prvfile, kpair);
   }
 
-  static IdentityFile newInstance(String name, byte[] prvkey, byte[] pubkey, JSch jsch) throws JSchException{
+  static IdentityFile newInstance(String name, byte[] prvkey, byte[] pubkey, ConfigurationSupport jsch) throws JSchException{
 
     KeyPair kpair = KeyPair.load(jsch, prvkey, pubkey);
     return new IdentityFile(jsch, name, kpair);
   }
 
-  private IdentityFile(JSch jsch, String name, KeyPair kpair) throws JSchException{
+  private IdentityFile(ConfigurationSupport jsch, String name, KeyPair kpair) throws JSchException{
     this.jsch = jsch;
     this.identity = name;
     this.kpair = kpair;

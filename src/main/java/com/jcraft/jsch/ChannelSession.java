@@ -31,7 +31,7 @@ package com.jcraft.jsch;
 
 import java.util.*;
 
-class ChannelSession extends Channel{
+public class ChannelSession extends Channel{
   private static byte[] _session=Util.str2byte("session");
 
   protected boolean agent_forwarding=false;
@@ -47,7 +47,7 @@ class ChannelSession extends Channel{
   protected int thp=480;
   protected byte[] terminal_mode=null;
 
-  ChannelSession(){
+  public ChannelSession(){
     super();
     type=_session;
     io=new IO();

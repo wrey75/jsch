@@ -30,6 +30,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.jcraft.jsch.jce;
 
 import com.jcraft.jsch.Cipher;
+
+import javax.crypto.ShortBufferException;
 import javax.crypto.spec.*;
 
 public class AES256CTR implements Cipher{
@@ -66,7 +68,7 @@ public class AES256CTR implements Cipher{
       throw e;
     }
   }
-  public void update(byte[] foo, int s1, int len, byte[] bar, int s2) throws Exception{
+  public void update(byte[] foo, int s1, int len, byte[] bar, int s2) throws ShortBufferException {
     cipher.update(foo, s1, len, bar, s2);
   }
   public boolean isCBC(){return false; }

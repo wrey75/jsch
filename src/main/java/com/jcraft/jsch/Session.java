@@ -29,11 +29,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.oxande.ssh.ConfigurationSupport;
+import com.oxande.ssh.ISession;
+
+import javax.crypto.ShortBufferException;
 import java.io.*;
 import java.net.*;
 import java.util.Vector;
 
-public class Session implements Runnable{
+public class Session implements Runnable, ISession {
 
   // http://ietf.org/internet-drafts/draft-ietf-secsh-assignednumbers-01.txt
   static final int SSH_MSG_DISCONNECT=                      1;
@@ -152,9 +156,9 @@ public class Session implements Runnable{
   String username=null;
   byte[] password=null;
 
-  JSch jsch;
+  ConfigurationSupport jsch;
 
-  Session(JSch jsch, String username, String host, int port) throws JSchException{
+  public Session(ConfigurationSupport jsch, String username, String host, int port) throws JSchException{
     super();
     this.jsch=jsch;
     buf=new Buffer();
@@ -876,7 +880,7 @@ key_type+" key fingerprint is "+key_fprint+".\n"+
   }
 
   // encode will bin invoked in write with synchronization.
-  public void encode(Packet packet) throws Exception{
+  public void encode(Packet packet) throws ShortBufferException {
 //System.err.println("encode: "+packet.buffer.getCommand());
 //System.err.println("        "+packet.buffer.index);
 //if(packet.buffer.getCommand()==96){
@@ -1343,7 +1347,8 @@ key_type+" key fingerprint is "+key_fprint+".\n"+
     _write(packet);
   }
 
-  public void write(Packet packet) throws Exception{
+  @Override
+  public void write(Packet packet) throws JSchException, IOException, ShortBufferException {
     // System.err.println("in_kex="+in_kex+" "+(packet.buffer.getCommand()));
     long t = getTimeout();
     while(in_kex){
@@ -1372,7 +1377,7 @@ key_type+" key fingerprint is "+key_fprint+".\n"+
     _write(packet);
   }
 
-  private void _write(Packet packet) throws Exception{
+  private void _write(Packet packet) throws IOException, ShortBufferException {
     synchronized(lock){
       encode(packet);
       if(io!=null){
@@ -2135,19 +2140,19 @@ break;
     return channel;
   } 
 
-  private class GlobalRequestReply{
+  public static class GlobalRequestReply{
     private Thread thread=null;
     private int reply=-1;
     private int port=0;
-    void setThread(Thread thread){
+    public void setThread(Thread thread){
       this.thread=thread;
       this.reply=-1;
     }
-    Thread getThread(){ return thread; }
+    public Thread getThread(){ return thread; }
     void setReply(int reply){ this.reply=reply; }
-    int getReply(){ return this.reply; }
-    int getPort(){ return this.port; }
-    void setPort(int port){ this.port=port; }
+    public int getReply(){ return this.reply; }
+    public int getPort(){ return this.port; }
+    public void setPort(int port){ this.port=port; }
   }
   private GlobalRequestReply grr=new GlobalRequestReply();
   private int _setPortForwardingR(String bind_address, int rport) throws JSchException{
@@ -2278,6 +2283,7 @@ break;
   public void setPort(int port){ this.port=port; }
   void setUserName(String username){ this.username=username; }
   public void setUserInfo(UserInfo userinfo){ this.userinfo=userinfo; }
+  @Override
   public UserInfo getUserInfo(){ return userinfo; }
   public void setInputStream(InputStream in){ this.in=in; }
   public void setOutputStream(OutputStream out){ this.out=out; }
@@ -2319,6 +2325,7 @@ break;
     }
   }
 
+  @Override
   public String getConfig(String key){
     Object foo=null;
     if(config!=null){
@@ -2396,6 +2403,8 @@ break;
   private HostKey hostkey=null;
   public HostKey getHostKey(){ return hostkey; }
   public String getHost(){return host;}
+  
+  @Override
   public String getUserName(){return username;}
   public int getPort(){return port;}
   public void setHostKeyAlias(String hostKeyAlias){
@@ -2836,5 +2845,10 @@ break;
     String value = config.getValue(key);
     if(value != null)
       this.setConfig(key, value);
+  }
+  
+  @Override
+  public Packet getPacket(){
+    return this.packet;
   }
 }

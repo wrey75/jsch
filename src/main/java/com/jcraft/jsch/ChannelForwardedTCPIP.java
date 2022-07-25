@@ -29,6 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.oxande.ssh.ISession;
+
 import java.net.*;
 import java.io.*;
 import java.util.Vector;
@@ -164,7 +166,7 @@ public class ChannelForwardedTCPIP extends Channel{
     }
   }
 
-  private static Config getPort(Session session, String address_to_bind, int rport){
+  private static Config getPort(ISession session, String address_to_bind, int rport){
     synchronized(pool){
       for(int i=0; i<pool.size(); i++){
         Config bar = (Config)(pool.elementAt(i));
@@ -199,7 +201,7 @@ public class ChannelForwardedTCPIP extends Channel{
     return bar;
   }
 
-  static String normalize(String address){
+  public static String normalize(String address){
     if(address==null){ return "localhost"; }
     else if(address.length()==0 || address.equals("*")){ return ""; }
     else{ return address; }
@@ -254,7 +256,7 @@ public class ChannelForwardedTCPIP extends Channel{
   static void delPort(Session session, int rport){
     delPort(session, null, rport);
   }
-  static void delPort(Session session, String address_to_bind, int rport){
+  static void delPort(ISession session, String address_to_bind, int rport){
     synchronized(pool){
       Config foo = getPort(session, normalize(address_to_bind), rport);
       if(foo == null)

@@ -29,7 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-class JSchPartialAuthException extends JSchException{
+public class JSchPartialAuthException extends JSchException{
   //private static final long serialVersionUID=-378849862323360367L;
   String methods;
   public JSchPartialAuthException () {

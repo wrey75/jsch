@@ -33,7 +33,7 @@ import java.util.*;
 
 public class ChannelShell extends ChannelSession{
 
-  ChannelShell(){
+  public ChannelShell(){
     super();
     pty=true;
   }

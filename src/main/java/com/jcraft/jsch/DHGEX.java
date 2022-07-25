@@ -29,6 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.oxande.ssh.ISession;
+
 public class DHGEX extends KeyExchange{
 
   private static final int SSH_MSG_KEX_DH_GEX_GROUP=               31;
@@ -58,8 +60,8 @@ public class DHGEX extends KeyExchange{
 
   protected String hash="sha-1";
 
-  public void init(Session session,
-		   byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception{
+  public void init(ISession session,
+                   byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception{
     this.session=session;
     this.V_S=V_S;      
     this.V_C=V_C;      

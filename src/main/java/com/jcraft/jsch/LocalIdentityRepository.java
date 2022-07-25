@@ -29,20 +29,23 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.oxande.ssh.ConfigurationSupport;
+
+import java.util.List;
 import java.util.Vector;
 
-class LocalIdentityRepository implements IdentityRepository {
-  private static final String name = "Local Identity Repository";
+public class LocalIdentityRepository implements IdentityRepository {
+  private static final String NAME = "Local Identity Repository";
 
-  private Vector identities = new Vector();
-  private JSch jsch;
+  private final List<Identity> identities = new Vector<>();
+  private ConfigurationSupport jsch;
 
-  LocalIdentityRepository(JSch jsch){
+  public LocalIdentityRepository(ConfigurationSupport jsch){
     this.jsch = jsch;
   }
 
   public String getName(){
-    return name;
+    return NAME;
   }
 
   public int getStatus(){
@@ -53,7 +56,7 @@ class LocalIdentityRepository implements IdentityRepository {
     removeDupulicates();
     Vector v = new Vector();
     for(int i=0; i<identities.size(); i++){
-      v.addElement(identities.elementAt(i));
+      v.addElement(identities.get(i));
     }
     return v;
   }
@@ -62,14 +65,14 @@ class LocalIdentityRepository implements IdentityRepository {
     if(!identities.contains(identity)) {
       byte[] blob1 = identity.getPublicKeyBlob();
       if(blob1 == null) {
-        identities.addElement(identity);
+        identities.add(identity);
         return;
       }
       for(int i = 0; i<identities.size(); i++){
-        byte[] blob2 = ((Identity)identities.elementAt(i)).getPublicKeyBlob();
+        byte[] blob2 = ((Identity)identities.get(i)).getPublicKeyBlob();
         if(blob2 != null && Util.array_equals(blob1, blob2)){
           if(!identity.isEncrypted() && 
-             ((Identity)identities.elementAt(i)).isEncrypted()){
+             ((Identity)identities.get(i)).isEncrypted()){
             remove(blob2);
           }
           else {  
@@ -77,7 +80,7 @@ class LocalIdentityRepository implements IdentityRepository {
           }
         }
       }
-      identities.addElement(identity);
+      identities.add(identity);
     }
   }
 
@@ -95,7 +98,7 @@ class LocalIdentityRepository implements IdentityRepository {
 
   synchronized void remove(Identity identity) {
     if(identities.contains(identity)) {
-      identities.removeElement(identity);
+      identities.remove(identity);
       identity.clear();
     }
     else {
@@ -106,11 +109,11 @@ class LocalIdentityRepository implements IdentityRepository {
   public synchronized boolean remove(byte[] blob) {
     if(blob == null) return false;
     for(int i=0; i<identities.size(); i++) {
-      Identity _identity = (Identity)(identities.elementAt(i));
+      Identity _identity = (Identity)(identities.get(i));
       byte[] _blob = _identity.getPublicKeyBlob();
       if(_blob == null || !Util.array_equals(blob, _blob))
         continue;
-      identities.removeElement(_identity);
+      identities.remove(_identity);
       _identity.clear();
       return true;
     }
@@ -119,33 +122,33 @@ class LocalIdentityRepository implements IdentityRepository {
 
   public synchronized void removeAll() {
     for(int i=0; i<identities.size(); i++) {
-      Identity identity=(Identity)(identities.elementAt(i));
+      Identity identity=identities.get(i);
       identity.clear();
     }
-    identities.removeAllElements();
+    identities.clear();
   } 
 
   private void removeDupulicates(){
-    Vector v = new Vector();
+    List<byte[]> v = new Vector<>();
     int len = identities.size();
     if(len == 0) return;
     for(int i=0; i<len; i++){
-      Identity foo = (Identity)identities.elementAt(i);
+      Identity foo = (Identity)identities.get(i);
       byte[] foo_blob = foo.getPublicKeyBlob();
       if(foo_blob == null) continue;
       for(int j=i+1; j<len; j++){
-        Identity bar = (Identity)identities.elementAt(j);
+        Identity bar = (Identity)identities.get(j);
         byte[] bar_blob = bar.getPublicKeyBlob();
         if(bar_blob == null) continue;
         if(Util.array_equals(foo_blob, bar_blob) &&
            foo.isEncrypted() == bar.isEncrypted()){
-          v.addElement(foo_blob);
+          v.add(foo_blob);
           break;
         }
       }
     }
     for(int i=0; i<v.size(); i++){
-      remove((byte[])v.elementAt(i));
+      remove(v.get(i));
     }
   }
 }

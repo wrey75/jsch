@@ -29,12 +29,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
+import com.oxande.ssh.ConfigurationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public abstract class KeyPair{
+  private final Logger LOG = LoggerFactory.getLogger(KeyPair.class);
+  
   public static final int ERROR=0;
   public static final int DSA=1;
   public static final int RSA=2;
@@ -50,10 +55,10 @@ public abstract class KeyPair{
 
   private static final byte[] cr=Util.str2byte("\n");
 
-  public static KeyPair genKeyPair(JSch jsch, int type) throws JSchException{
+  public static KeyPair genKeyPair(ConfigurationSupport jsch, int type) throws JSchException{
     return genKeyPair(jsch, type, 1024);
   }
-  public static KeyPair genKeyPair(JSch jsch, int type, int key_size) throws JSchException{
+  public static KeyPair genKeyPair(ConfigurationSupport jsch, int type, int key_size) throws JSchException{
     KeyPair kpair=null;
     if(type==DSA){ kpair=new KeyPairDSA(jsch); }
     else if(type==RSA){ kpair=new KeyPairRSA(jsch); }
@@ -85,14 +90,14 @@ public abstract class KeyPair{
 
   protected String publicKeyComment = "no comment";
 
-  JSch jsch=null;
+  ConfigurationSupport jsch;
   private Cipher cipher;
   private HASH hash;
   private Random random;
 
   private byte[] passphrase;
 
-  public KeyPair(JSch jsch){
+  public KeyPair(ConfigurationSupport jsch){
     this.jsch=jsch;
   }
 
@@ -386,10 +391,9 @@ public abstract class KeyPair{
   private Random genRandom(){
     if(random==null){
       try{
-	Class c=Class.forName(jsch.getConfig("random"));
-        random=(Random)(c.newInstance());
+        random=jsch.getConfigInstance("random");
       }
-      catch(Exception e){ System.err.println("connect: random "+e); }
+      catch(Exception e){ LOG.error("connect: random ",e); }
     }
     return random;
   }
@@ -524,14 +528,14 @@ public abstract class KeyPair{
     return !encrypted;
   }
 
-  public static KeyPair load(JSch jsch, String prvkey) throws JSchException{
+  public static KeyPair load(ConfigurationSupport jsch, String prvkey) throws JSchException{
     String pubkey=prvkey+".pub";
     if(!new File(pubkey).exists()){
       pubkey=null;
     }
     return load(jsch, prvkey, pubkey);
   }
-  public static KeyPair load(JSch jsch, String prvfile, String pubfile) throws JSchException{
+  public static KeyPair load(ConfigurationSupport jsch, String prvfile, String pubfile) throws JSchException{
 
     byte[] prvkey=null;
     byte[] pubkey=null;
@@ -540,7 +544,7 @@ public abstract class KeyPair{
       prvkey = Util.fromFile(prvfile);
     }
     catch(IOException e){
-      throw new JSchException(e.toString(), (Throwable)e);
+      throw new JSchException(e.toString(), e);
     }
 
     String _pubfile=pubfile;
@@ -565,7 +569,7 @@ public abstract class KeyPair{
     }
   }
 
-  public static KeyPair load(JSch jsch, byte[] prvkey, byte[] pubkey) throws JSchException{
+  public static KeyPair load(ConfigurationSupport jsch, byte[] prvkey, byte[] pubkey) throws JSchException{
 
     byte[] iv=new byte[8];       // 8
     boolean encrypted=true;
@@ -985,7 +989,7 @@ public abstract class KeyPair{
     "Private-MAC: "
   };
 
-  static KeyPair loadPPK(JSch jsch, byte[] buf) throws JSchException {
+  static KeyPair loadPPK(ConfigurationSupport jsch, byte[] buf) throws JSchException {
     byte[] pubkey = null;
     byte[] prvkey = null;
     int lines = 0;

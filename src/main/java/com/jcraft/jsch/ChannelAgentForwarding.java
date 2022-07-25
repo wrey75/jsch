@@ -29,8 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
-import java.net.*;
-import java.util.Vector;
+import java.util.List;
 
 class ChannelAgentForwarding extends Channel{
 
@@ -128,17 +127,17 @@ class ChannelAgentForwarding extends Channel{
 
     if(typ==SSH2_AGENTC_REQUEST_IDENTITIES){ 
       mbuf.putByte(SSH2_AGENT_IDENTITIES_ANSWER);
-      Vector identities = irepo.getIdentities();
+      List<Identity> identities = irepo.getIdentities();
       synchronized(identities){
         int count=0;
         for(int i=0; i<identities.size(); i++){
-          Identity identity=(Identity)(identities.elementAt(i));
+          Identity identity= identities.get(i);
           if(identity.getPublicKeyBlob()!=null)
             count++;
         }
         mbuf.putInt(count);
         for(int i=0; i<identities.size(); i++){
-          Identity identity=(Identity)(identities.elementAt(i));
+          Identity identity= identities.get(i);
           byte[] pubkeyblob=identity.getPublicKeyBlob();
           if(pubkeyblob==null)
             continue;
@@ -160,11 +159,11 @@ class ChannelAgentForwarding extends Channel{
 //        datafellows = SSH_BUG_SIGBLOB;
 //      }
 
-      Vector identities = irepo.getIdentities();
+      List<Identity> identities = irepo.getIdentities();
       Identity identity = null;
       synchronized(identities){
         for(int i=0; i<identities.size(); i++){
-          Identity _identity=(Identity)(identities.elementAt(i));
+          Identity _identity= identities.get(i);
           if(_identity.getPublicKeyBlob()==null)
             continue;
           if(!Util.array_equals(blob, _identity.getPublicKeyBlob())){

@@ -29,6 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.oxande.ssh.ConfigurationSupport;
+
 public class KeyPairECDSA extends KeyPair{
 
   private static byte[][] oids = {
@@ -51,11 +53,11 @@ public class KeyPairECDSA extends KeyPair{
 
   private int key_size=256;
 
-  public KeyPairECDSA(JSch jsch){
+  public KeyPairECDSA(ConfigurationSupport jsch){
     this(jsch, null, null, null, null);
   }
 
-  public KeyPairECDSA(JSch jsch , byte[] pubkey){
+  public KeyPairECDSA(ConfigurationSupport jsch , byte[] pubkey){
     this(jsch, null, null, null, null);
 
     if(pubkey!=null){
@@ -72,7 +74,7 @@ public class KeyPairECDSA extends KeyPair{
     }
   }
 
-  public KeyPairECDSA(JSch jsch,
+  public KeyPairECDSA(ConfigurationSupport jsch,
                       byte[] name,
                       byte[] r_array,
                       byte[] s_array,
@@ -343,7 +345,7 @@ public class KeyPairECDSA extends KeyPair{
     return null;
   }
 
-  static KeyPair fromSSHAgent(JSch jsch, Buffer buf) throws JSchException {
+  static KeyPair fromSSHAgent(ConfigurationSupport jsch, Buffer buf) throws JSchException {
 
     byte[][] tmp = buf.getBytes(5, "invalid key format");
 

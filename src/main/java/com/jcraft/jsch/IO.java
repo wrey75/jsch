@@ -40,7 +40,7 @@ public class IO{
   private boolean out_dontclose=false;
   private boolean out_ext_dontclose=false;
 
-  void setOutputStream(OutputStream out){ this.out=out; }
+  public void setOutputStream(OutputStream out){ this.out=out; }
   void setOutputStream(OutputStream out, boolean dontclose){
     this.out_dontclose=dontclose;
     setOutputStream(out);
@@ -50,7 +50,7 @@ public class IO{
     this.out_ext_dontclose=dontclose;
     setExtOutputStream(out);
   }
-  void setInputStream(InputStream in){ this.in=in; }
+  public void setInputStream(InputStream in){ this.in=in; }
   void setInputStream(InputStream in, boolean dontclose){
     this.in_dontclose=dontclose;
     setInputStream(in);
@@ -60,7 +60,7 @@ public class IO{
     out.write(p.buffer.buffer, 0, p.buffer.index);
     out.flush();
   }
-  void put(byte[] array, int begin, int length) throws IOException {
+  public void put(byte[] array, int begin, int length) throws IOException {
     out.write(array, begin, length);
     out.flush();
   }
@@ -69,7 +69,7 @@ public class IO{
     out_ext.flush();
   }
 
-  int getByte() throws IOException {
+  public int getByte() throws IOException {
     return in.read();
   }
 
@@ -77,7 +77,7 @@ public class IO{
     getByte(array, 0, array.length);
   }
 
-  void getByte(byte[] array, int begin, int length) throws IOException {
+  public void getByte(byte[] array, int begin, int length) throws IOException {
     do{
       int completed = in.read(array, begin, length);
       if(completed<0){

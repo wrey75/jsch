@@ -29,6 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.oxande.ssh.ISession;
+
 public class DHG1 extends KeyExchange{
 
   static final byte[] g={ 2 };
@@ -69,8 +71,8 @@ public class DHG1 extends KeyExchange{
   private Buffer buf;
   private Packet packet;
 
-  public void init(Session session,
-		   byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception{
+  public void init(ISession session,
+                   byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception{
     this.session=session;
     this.V_S=V_S;      
     this.V_C=V_C;      

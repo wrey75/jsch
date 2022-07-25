@@ -29,10 +29,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.oxande.ssh.ConfigurationSupport;
+
 import java.io.InputStream;
+import java.util.List;
 import java.util.Vector;
 
-public class JSch{
+public class JSch implements ConfigurationSupport {
   /**
    * The version number.
    */
@@ -165,6 +168,7 @@ public class JSch{
     }
   }
 
+  @Override
   public synchronized IdentityRepository getIdentityRepository(){
     return this.identityRepository;
   }
@@ -362,7 +366,7 @@ public class JSch{
    *
    * @see #addIdentity(String prvkey, String passphrase)
    */
-  public void addIdentity(String prvkey) throws JSchException{
+  public void addIdentity(String prvkey) throws JSchException {
     addIdentity(prvkey, (byte[])null);
   }
 
@@ -402,7 +406,7 @@ public class JSch{
    *
    * @see #addIdentity(String prvkey, String pubkey, byte[] passphrase)
    */
-  public void addIdentity(String prvkey, byte[] passphrase) throws JSchException{
+  public void addIdentity(String prvkey, byte[] passphrase) throws JSchException {
     Identity identity=IdentityFile.newInstance(prvkey, null, this);
     addIdentity(identity, passphrase);
   }
@@ -485,10 +489,10 @@ public class JSch{
   /**
    * @deprecated use #removeIdentity(Identity identity)
    */
-  public void removeIdentity(String name) throws JSchException{
-    Vector identities = identityRepository.getIdentities();
+  void removeIdentity(String name) {
+    List<Identity> identities = identityRepository.getIdentities();
     for(int i=0; i<identities.size(); i++){
-      Identity identity=(Identity)(identities.elementAt(i));
+      Identity identity=(Identity)(identities.get(i));
       if(!identity.getName().equals(name))
         continue;
       if(identityRepository instanceof LocalIdentityRepository){
@@ -514,16 +518,12 @@ public class JSch{
    * Lists names of identities included in the identityRepository.
    *
    * @return names of identities
-   *
-   * @throws JSchException if identityReposory has problems.
    */
-  public Vector getIdentityNames() throws JSchException{
-    Vector foo=new Vector();
-    Vector identities = identityRepository.getIdentities();
-    for(int i=0; i<identities.size(); i++){
-      Identity identity=(Identity)(identities.elementAt(i));
-      foo.addElement(identity.getName());
-    }
+  public Vector<String> getIdentityNames() {
+    Vector<String> foo = new Vector<>();
+    identityRepository.getIdentities().stream()
+            .map(Identity::getName)
+            .forEach(foo::add);
     return foo;
   }
 
@@ -542,10 +542,15 @@ public class JSch{
    * @param key key for the configuration.
    * @return config value
    */
-  public static String getConfig(String key){ 
+  @Override
+  public String getConfig(String key){
+    return getStaticConfig(key);
+  }
+
+  public static String getStaticConfig(String key){
     synchronized(config){
       return (String)(config.get(key));
-    } 
+    }
   }
 
   /**

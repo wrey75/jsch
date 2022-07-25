@@ -29,6 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import java.util.List;
 import java.util.Vector;
 
 public interface IdentityRepository {
@@ -37,8 +38,8 @@ public interface IdentityRepository {
   public static final int RUNNING=2;
   public String getName();
   public int getStatus();
-  public Vector getIdentities();
-  public boolean add(byte[] identity);
+  public Vector<Identity> getIdentities();
+  boolean add(byte[] identity);
   public boolean remove(byte[] blob);
   public void removeAll();
 
@@ -49,11 +50,11 @@ public interface IdentityRepository {
    * been introduced to cache ciphered keys for them, and pass them
    * whenever they are de-ciphered.
    */
-  static class Wrapper implements IdentityRepository {
+  class Wrapper implements IdentityRepository {
     private IdentityRepository ir;
     private Vector cache = new Vector();
     private boolean keep_in_cache = false;
-    Wrapper(IdentityRepository ir){
+    public Wrapper(IdentityRepository ir){
       this(ir, false);
     }
     Wrapper(IdentityRepository ir, boolean keep_in_cache){
@@ -76,15 +77,15 @@ public interface IdentityRepository {
       cache.removeAllElements();
       ir.removeAll();
     }
-    public Vector getIdentities() {
-      Vector result = new Vector();
+    public Vector<Identity> getIdentities() {
+      Vector<Identity> result = new Vector<>();
       for(int i = 0; i< cache.size(); i++){
         Identity identity = (Identity)(cache.elementAt(i));
         result.add(identity);
       }
-      Vector tmp = ir.getIdentities();
+      List<Identity> tmp = ir.getIdentities();
       for(int i = 0; i< tmp.size(); i++){
-        result.add(tmp.elementAt(i));
+        result.add(tmp.get(i));
       }
       return result;
     }

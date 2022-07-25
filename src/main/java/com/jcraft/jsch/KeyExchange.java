@@ -29,16 +29,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.jcraft.jsch;
 
+import com.oxande.ssh.ISession;
+
 public abstract class KeyExchange{
 
-  static final int PROPOSAL_KEX_ALGS=0;
+  public static final int PROPOSAL_KEX_ALGS=0;
   static final int PROPOSAL_SERVER_HOST_KEY_ALGS=1;
-  static final int PROPOSAL_ENC_ALGS_CTOS=2;
-  static final int PROPOSAL_ENC_ALGS_STOC=3;
-  static final int PROPOSAL_MAC_ALGS_CTOS=4;
-  static final int PROPOSAL_MAC_ALGS_STOC=5;
-  static final int PROPOSAL_COMP_ALGS_CTOS=6;
-  static final int PROPOSAL_COMP_ALGS_STOC=7;
+  public static final int PROPOSAL_ENC_ALGS_CTOS=2;
+  public static final int PROPOSAL_ENC_ALGS_STOC=3;
+  public static final int PROPOSAL_MAC_ALGS_CTOS=4;
+  public static final int PROPOSAL_MAC_ALGS_STOC=5;
+  public static final int PROPOSAL_COMP_ALGS_CTOS=6;
+  public static final int PROPOSAL_COMP_ALGS_STOC=7;
   static final int PROPOSAL_LANG_CTOS=8;
   static final int PROPOSAL_LANG_STOC=9;
   static final int PROPOSAL_MAX=10;
@@ -61,14 +63,14 @@ public abstract class KeyExchange{
 
   public static final int STATE_END=0;
 
-  protected Session session=null;
+  protected ISession session=null;
   protected HASH sha=null;
   protected byte[] K=null;
   protected byte[] H=null;
   protected byte[] K_S=null;
 
-  public abstract void init(Session session, 
-			    byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception;
+  public abstract void init(ISession session,
+                            byte[] V_S, byte[] V_C, byte[] I_S, byte[] I_C) throws Exception;
   public abstract boolean next(Buffer buf) throws Exception;
 
   public abstract int getState();
@@ -89,7 +91,7 @@ public abstract class KeyExchange{
     return key_alg_name;
   }
 
-  protected static String[] guess(byte[]I_S, byte[]I_C){
+  public static String[] guess(byte[]I_S, byte[]I_C){
     String[] guess=new String[PROPOSAL_MAX];
     Buffer sb=new Buffer(I_S); sb.setOffSet(17);
     Buffer cb=new Buffer(I_C); cb.setOffSet(17);
@@ -166,10 +168,10 @@ public abstract class KeyExchange{
     catch(Exception e){ System.err.println("getFingerPrint: "+e); }
     return Util.getFingerPrint(hash, getHostKey());
   }
-  byte[] getK(){ return K; }
-  byte[] getH(){ return H; }
-  HASH getHash(){ return sha; }
-  byte[] getHostKey(){ return K_S; }
+  public byte[] getK(){ return K; }
+  public byte[] getH(){ return H; }
+  public HASH getHash(){ return sha; }
+  public byte[] getHostKey(){ return K_S; }
 
   /*
    * It seems JCE included in Oracle's Java7u6(and later) has suddenly changed

@@ -36,7 +36,7 @@ public class CipherNone implements Cipher{
   public int getBlockSize(){return bsize;}
   public void init(int mode, byte[] key, byte[] iv) throws Exception{
   }
-  public void update(byte[] foo, int s1, int len, byte[] bar, int s2) throws Exception{
+  public void update(byte[] foo, int s1, int len, byte[] bar, int s2) {
   }
   public boolean isCBC(){return false; }
 }
